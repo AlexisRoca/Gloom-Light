@@ -4,14 +4,12 @@ using System.Collections;
 public class Fridge : AbstractActiveObject {
 
     // Attributes
-    new Light light;
+    public Light light;
     bool isOpen = false;
+
 
     // Use this for initialization
     void Start () {
-        // Get the SpotLight Component
-        light = this.gameObject.GetComponent<Light>();
-
         // Object disable
         light.enabled = false;
         isOpen = false;
