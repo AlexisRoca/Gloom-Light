@@ -4,15 +4,13 @@ using System.Collections;
 public class Player : MonoBehaviour {
 
     protected CharacterController characterController;
-    private Controller m_controller;
-
+    public Controller m_controller;
     private bool m_interact;
     private bool m_lightOn = false;
 
     // Start & Update functions
     void Start()
     {
-        m_controller = new Pad();
         characterController = GetComponent<CharacterController>();
     }
 
