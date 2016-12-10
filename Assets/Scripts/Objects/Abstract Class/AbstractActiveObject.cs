@@ -3,15 +3,15 @@ using System.Collections;
 
 abstract public class AbstractActiveObject : AbstractObjects {
 
-    // Event calls when collision
-    void OnCollisionEnter(Collision collision) {
-        if (collision.gameObject.GetComponent<Player>() != null) {
+    // Event calls when in trigger and interact
+    void OnTriggerStay(Collider collider) {
+        if (collider.gameObject.GetComponent<Player>() != null) {
 
-            Player player = collision.gameObject.GetComponent<Player>();
+            Player player = collider.gameObject.GetComponent<Player>();
 
-            //if (player.isInteracted()) {
-            //    Play();
-            //}
+            if (player.getInteract()) {
+                Play();
+            }
         }
     }
 }
