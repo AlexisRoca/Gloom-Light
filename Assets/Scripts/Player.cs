@@ -26,18 +26,6 @@ public class Player : MonoBehaviour {
         Debug.Log("Creating Player");
     }
 
-    void OnTriggerEnter(Collider collider)
-    {
-        Debug.Log("collider name : " + collider.gameObject.name);
-
-        if (collider.gameObject.tag == "ConeLight")
-        {
-            //Destroy(this.gameObject);
-            Debug.Log("MOOOOOOOORT _ collider.gameObject.name : " + collider.gameObject.name);
-            Debug.Log("collider.gameObject.tag : " + collider.gameObject.tag);
-        }
-    }
-
     public bool getInteract()
     { return m_interact; }
     public void setInteract(bool interact)
