@@ -60,6 +60,8 @@ public class GameEngine : MonoBehaviour
         m_players = new Player[gamepadNb];
 
         for(int i=0; i<gamepadNb; i++)
+        {
             //m_players[i] = new Player();
+        }
     }    
 }
