@@ -19,8 +19,7 @@ public class Player : MonoBehaviour {
         characterController.Move(m_controller.getDisplacement() * Time.deltaTime);
 
         m_interact = m_controller.getInteractInput();
-        if(m_controller.getLightInput())
-            m_lightOn = !m_lightOn;
+        m_lightOn = m_controller.getLightInput();
 
         if(m_lightOn)
             this.GetComponentInChildren<Light>().enabled = true;
@@ -29,10 +28,13 @@ public class Player : MonoBehaviour {
 
         Vector2 aimVector = m_controller.getAngleTorchlight();
 
-
         if (aimVector.x != 0.0f || aimVector.y != 0.0f)
         {
-            float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg;
+            float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
+
+
+
+
             this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
         }
     }
