@@ -9,7 +9,7 @@ public class IA : Controller
         throw new NotImplementedException();
     }
 
-    public override float getAngleTorchlight()
+    public override Vector2 getAngleTorchlight()
     {
         throw new NotImplementedException();
     }
