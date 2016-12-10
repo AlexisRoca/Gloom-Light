@@ -1,15 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Pad : Controller {
+public class Pad : Controller
+{
 
     public int joystickNumber = 1;
     string joystickString;
-
-    void Update()
-    {
-        joystickString = joystickNumber.ToString();
-    }
 
     public override Vector3 getDisplacement()
     {
@@ -21,17 +17,27 @@ public class Pad : Controller {
         return movementVector;
     }
 
-    public override float getAngleTorchlight()
+    public override Vector2 getAngleTorchlight()
     {
         joystickString = joystickNumber.ToString();
 
-        movementVector.x = Input.GetAxis("LeftJoystickX_p" + joystickString);
-        movementVector.z = Input.GetAxis("LeftJoystickY_p" + joystickString);
+        Vector2 verticalAxes = new Vector2(0.0f, 1.0f);
 
         aimVector.x = Input.GetAxis("RightJoystickX_p" + joystickString);
-        aimVector.z = Input.GetAxis("RightJoystickY_p" + joystickString);
+        aimVector.y = Input.GetAxis("RightJoystickY_p" + joystickString);
 
-        return Vector3.Dot(movementVector, aimVector);
+        //float dotProduct = Vector3.Dot(aimVector, verticalAxes);
+        //Vector3 crossProduct = Vector3.Cross(aimVector, verticalAxes);
+
+        //float cosAlpha = dotProduct / (getNorm(aimVector) * getNorm(verticalAxes));
+        //float sinAlpha = crossProduct.y / (getNorm(aimVector) * getNorm(verticalAxes));
+
+        //float angle = Mathf.Atan2(sinAlpha, cosAlpha) * 180/Mathf.PI;
+        float angle = Mathf.Acos(Vector3.Dot(aimVector, verticalAxes)) * 180 / Mathf.PI;
+
+        Debug.Log(aimVector);
+
+        return aimVector;
     }
 
     public override bool getInteractInput()
@@ -46,5 +52,12 @@ public class Pad : Controller {
         joystickString = joystickNumber.ToString();
 
         return Input.GetButtonDown("LightButton_p" + joystickString);
+    }
+
+    private float getNorm(Vector3 vec3)
+    {
+        return Mathf.Sqrt(Mathf.Pow(vec3[0], 2) +
+                          Mathf.Pow(vec3[1], 2) +
+                          Mathf.Pow(vec3[2], 2));
     }
 }
