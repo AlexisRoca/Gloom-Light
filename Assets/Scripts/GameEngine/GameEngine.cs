@@ -7,7 +7,7 @@ public class GameEngine : MonoBehaviour
     private Player [] m_players;
 
     private Light [] m_roomLights;
-    private Light [] m_windowsLight;
+    private Light [] m_windowsLights;
 
     private void Awake()
     {
@@ -38,11 +38,20 @@ public class GameEngine : MonoBehaviour
 
     void initLights()
     {
+        // Room lights
         GameObject[] roomLightsGO = GameObject.FindGameObjectsWithTag("RoomLight");
         m_roomLights = new Light[roomLightsGO.Length];
 
         for(int i = 0; i < roomLightsGO.Length; i++)
             m_roomLights.SetValue(roomLightsGO[i].GetComponent<Light>(),i);
+
+
+        // Windows lights
+        GameObject[] windowsLightsGO = GameObject.FindGameObjectsWithTag("WindowLight");
+        m_windowsLights = new Light[windowsLightsGO.Length];
+
+        for(int i = 0; i < windowsLightsGO.Length; i++)
+            m_windowsLights.SetValue(windowsLightsGO[i].GetComponent<Light>(),i);
     }
 
     void initPlayers()
@@ -52,7 +61,7 @@ public class GameEngine : MonoBehaviour
 
         for(int i=0; i<gamepadNb; i++)
         {
-            //m_players[i].
+            //m_players[i] = new Player();
         }
     }    
 }
