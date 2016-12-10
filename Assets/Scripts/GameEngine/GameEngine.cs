@@ -4,57 +4,39 @@ using System.Collections;
 public class GameEngine : MonoBehaviour
 {
     private AbstractObjects [] m_roomsObjects;
-
     private Player [] m_players;
-    public Player m_prefabPlayer;
+    private LightManager m_lightManager;
 
-    private Light [] m_roomLights;
-    private Light [] m_windowsLights;
+    public Player m_prefabPlayer;
 
 
     private void Awake()
     {
         loadScene();
+
+        m_lightManager = new LightManager(Time.time);
+        m_lightManager.initLights();
+
         initPlayers();
     }
 
     // Use this for initialization
     void Start ()
     {
-	    
-	}
+  
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        //Debug.Log("Hello World!");
-	}
+        m_lightManager.update(Time.time);
+    }
 
 
     void loadScene()
     {
         // Get all elements from the scene
         m_roomsObjects = GameObject.FindObjectsOfType<AbstractObjects>();
-
-        initLights();
-    }
-
-    void initLights()
-    {
-        // Room lights
-        GameObject[] roomLightsGO = GameObject.FindGameObjectsWithTag("RoomLight");
-        m_roomLights = new Light[roomLightsGO.Length];
-
-        for(int i = 0; i < roomLightsGO.Length; i++)
-            m_roomLights.SetValue(roomLightsGO[i].GetComponent<Light>(),i);
-
-
-        // Windows lights
-        GameObject[] windowsLightsGO = GameObject.FindGameObjectsWithTag("WindowLight");
-        m_windowsLights = new Light[windowsLightsGO.Length];
-
-        for(int i = 0; i < windowsLightsGO.Length; i++)
-            m_windowsLights.SetValue(windowsLightsGO[i].GetComponent<Light>(),i);
     }
 
     void initPlayers()
