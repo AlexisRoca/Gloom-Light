@@ -20,9 +20,13 @@ public class Fridge : AbstractActiveObject {
     // Play animation and sound
     override protected void Play() {
         if (isOpen) {
+            m_animator.Play("Close");
+
             light.enabled = false;
             isOpen = false;
         } else {
+            m_animator.Play("Open");
+
             light.enabled = true;
             isOpen = true;
         }
