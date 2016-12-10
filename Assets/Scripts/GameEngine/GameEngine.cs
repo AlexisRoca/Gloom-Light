@@ -4,10 +4,13 @@ using System.Collections;
 public class GameEngine : MonoBehaviour
 {
     private AbstractObjects [] m_roomsObjects;
+
     private Player [] m_players;
+    public Player m_prefabPlayer;
 
     private Light [] m_roomLights;
     private Light [] m_windowsLights;
+
 
     private void Awake()
     {
@@ -24,7 +27,7 @@ public class GameEngine : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-	
+        //Debug.Log("Hello World!");
 	}
 
 
@@ -61,7 +64,12 @@ public class GameEngine : MonoBehaviour
 
         for(int i=0; i<gamepadNb; i++)
         {
-            //m_players[i] = new Player();
+            Player player = m_players[i];
+            player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
+
+            Pad pad = new Pad();
+            pad.joystickNumber = i+1;
+            player.m_controller = pad;
         }
     }    
 }
