@@ -30,16 +30,12 @@ public class Pad : Controller
     public override bool getInteractInput()
     {
         joystickString = joystickNumber.ToString();
-
         return Input.GetButtonDown("InteractButton_p" + joystickString);
     }
 
     public override bool getLightInput()
     {
         joystickString = joystickNumber.ToString();
-
-        Debug.Log(Input.GetAxis("LightButton_p" + joystickString));
-
         return (Input.GetAxis("LightButton_p" + joystickString) != 0);
     }
 
