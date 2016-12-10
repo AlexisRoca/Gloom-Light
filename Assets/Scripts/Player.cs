@@ -31,10 +31,6 @@ public class Player : MonoBehaviour {
         if (aimVector.x != 0.0f || aimVector.y != 0.0f)
         {
             float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
-
-
-
-
             this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
         }
     }
@@ -43,7 +39,6 @@ public class Player : MonoBehaviour {
     public Player(Controller controller)
     {
         m_controller = controller;
-        Debug.Log("Creating Player");
     }
 
     public bool getInteract()
