@@ -21,21 +21,8 @@ public class Pad : Controller
     {
         joystickString = joystickNumber.ToString();
 
-        Vector2 verticalAxes = new Vector2(0.0f, 1.0f);
-
         aimVector.x = Input.GetAxis("RightJoystickX_p" + joystickString);
         aimVector.y = Input.GetAxis("RightJoystickY_p" + joystickString);
-
-        //float dotProduct = Vector3.Dot(aimVector, verticalAxes);
-        //Vector3 crossProduct = Vector3.Cross(aimVector, verticalAxes);
-
-        //float cosAlpha = dotProduct / (getNorm(aimVector) * getNorm(verticalAxes));
-        //float sinAlpha = crossProduct.y / (getNorm(aimVector) * getNorm(verticalAxes));
-
-        //float angle = Mathf.Atan2(sinAlpha, cosAlpha) * 180/Mathf.PI;
-        float angle = Mathf.Acos(Vector3.Dot(aimVector, verticalAxes)) * 180 / Mathf.PI;
-
-        Debug.Log(aimVector);
 
         return aimVector;
     }
@@ -51,7 +38,9 @@ public class Pad : Controller
     {
         joystickString = joystickNumber.ToString();
 
-        return Input.GetButtonDown("LightButton_p" + joystickString);
+        Debug.Log(Input.GetAxis("LightButton_p" + joystickString));
+
+        return (Input.GetAxis("LightButton_p" + joystickString) != 0);
     }
 
     private float getNorm(Vector3 vec3)
