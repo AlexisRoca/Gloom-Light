@@ -19,7 +19,7 @@ public class Lamp : AbstractActiveObject
     }
 
     // Play animation and sound
-    override protected void Play()
+    override protected void Play(Collider collider)
     {
         if (m_isOn)
         {

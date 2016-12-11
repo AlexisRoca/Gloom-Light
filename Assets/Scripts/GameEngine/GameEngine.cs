@@ -15,14 +15,9 @@ public class GameEngine : MonoBehaviour
 
     public void Start()
     {
-        loadScene();
 
-        m_lightManager = new LightManager(Time.time);
-        m_lightManager.initLights();
-
-        initPlayers();
     }
-	
+
 	// Update is called once per frame
 	void Update ()
     {
@@ -31,13 +26,13 @@ public class GameEngine : MonoBehaviour
             m_lightManager.update(Time.time);
             for (int i = 0; i < m_players.Length; i++)
                 m_players[i].updatePlayer();
-
+  
             PauseCanvas.enabled = false;
-        }
+    }
         else
         {
             PauseCanvas.enabled = true;
-
+	
             // Exit Game Condition
             for (int i = 0; i < m_players.Length; i++)
                 if (m_players[i].m_controller.getExitInput())
@@ -83,5 +78,5 @@ public class GameEngine : MonoBehaviour
 
             activePlayerIndex++;
         }
-    }
+    }    
 }

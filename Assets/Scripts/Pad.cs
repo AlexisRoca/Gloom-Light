@@ -3,7 +3,6 @@ using System.Collections;
 
 public class Pad : Controller
 {
-
     public int joystickNumber = 1;
     string joystickString;
 
@@ -30,7 +29,6 @@ public class Pad : Controller
     public override bool getInteractInput()
     {
         joystickString = joystickNumber.ToString();
-
         return Input.GetButtonDown("InteractButton_p" + joystickString);
     }
 
@@ -45,6 +43,7 @@ public class Pad : Controller
     {
         joystickString = joystickNumber.ToString();
 
+<<<<<<< HEAD
         return Input.GetButtonDown("ExitButton_p" + joystickString);
     }
 
@@ -52,6 +51,8 @@ public class Pad : Controller
     {
         joystickString = joystickNumber.ToString();
 
+=======
+>>>>>>> 06c8cd7f75b30a86df678d8ab4a48ea13815a646
         return (Input.GetAxis("LightButton_p" + joystickString) != 0);
     }
 

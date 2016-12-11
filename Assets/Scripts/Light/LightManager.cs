@@ -15,13 +15,19 @@ public class LightManager
     private Light [] m_roomLights;
     private Light [] m_windowsLights;
 
-    private float m_startTime;
-    private float m_fadeInStart = 1.0f;
+    private float m_startStateTime;
     private float m_roomLightsOnDuration = 5;
+
+    private int m_lightningNumber;
+    private int m_currentLightningNumber;
+    private float m_timeSinceLastLightning;
+    private float m_lightningCooldown = 10.0f;
+    private float m_lightningDuration = 0.3f;
+    private bool m_lightningOn;
 
     public LightManager(float gameTime)
     {
-        m_startTime = gameTime;
+        m_startStateTime = gameTime;
         m_substate = Substate.Start;
     }
 
@@ -55,14 +61,27 @@ public class LightManager
         switch(m_substate)
         {
             case Substate.Start:
-            if(gameTime > m_startTime + m_roomLightsOnDuration)
+            if(gameTime > m_startStateTime + m_roomLightsOnDuration)
+            {
+                m_startStateTime = gameTime;
                 return Substate.Off;
+            }
             break;
 
             case Substate.Lightning:
+            if((m_currentLightningNumber == m_lightningNumber) && !m_lightningOn)
+                return Substate.Off;
             break;
 
             case Substate.Off:
+            if((gameTime-m_timeSinceLastLightning) > m_lightningCooldown)
+            {
+                m_lightningNumber = Random.Range(1,4);
+                m_currentLightningNumber = 0;
+                m_lightningOn = false;
+
+                return Substate.Lightning;
+            }
             break;
         }
 
@@ -74,13 +93,36 @@ public class LightManager
         switch(m_substate)
         {
             case Substate.Start:
-               float intensity = Mathf.Lerp(m_fadeInStart,0.0f,(gameTime-m_startTime) / m_roomLightsOnDuration);
+               float intensity = Mathf.Lerp(1.0f,0.0f,(gameTime-m_startStateTime) / m_roomLightsOnDuration);
 
                for(int i=0; i<m_roomLights.Length; i++)
                     m_roomLights[i].intensity = intensity;
             break;
 
             case Substate.Lightning:
+            if(m_lightningOn)
+            {
+                if((gameTime-m_timeSinceLastLightning)>m_lightningDuration)
+                {
+                    m_lightningOn = false;
+                    for(int i = 0; i < m_windowsLights.Length; i++)
+                        m_windowsLights[i].intensity = 0.0f;
+                }
+            }
+
+            else
+            {
+                float randomNumber = Random.value;
+                if(randomNumber > 0.9f)
+                {
+                    m_lightningOn = true;
+                    m_timeSinceLastLightning = gameTime;
+                    m_currentLightningNumber++;
+
+                    for(int i = 0; i < m_windowsLights.Length; i++)
+                        m_windowsLights[i].intensity = 2.0f;
+                }
+            }
             break;
 
             case Substate.Off:
