@@ -32,6 +32,13 @@ public class Pad : Controller
         return Input.GetButtonDown("InteractButton_p" + joystickString);
     }
 
+    public override bool getLightInput()
+    {
+        joystickString = joystickNumber.ToString();
+
+        return (Input.GetAxis("LightButton_p" + joystickString) != 0);
+    }
+
     public override bool getPauseInput()
     {
         joystickString = joystickNumber.ToString();
@@ -44,19 +51,5 @@ public class Pad : Controller
         joystickString = joystickNumber.ToString();
 
         return Input.GetButtonDown("ExitButton_p" + joystickString);
-    }
-
-    public override bool getLightInput()
-    {
-        joystickString = joystickNumber.ToString();
-
-        return (Input.GetAxis("LightButton_p" + joystickString) != 0);
-    }
-
-    private float getNorm(Vector3 vec3)
-    {
-        return Mathf.Sqrt(Mathf.Pow(vec3[0], 2) +
-                          Mathf.Pow(vec3[1], 2) +
-                          Mathf.Pow(vec3[2], 2));
     }
 }
