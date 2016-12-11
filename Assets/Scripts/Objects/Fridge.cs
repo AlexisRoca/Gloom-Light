@@ -24,7 +24,7 @@ public class Fridge : AbstractActiveObject {
     }
 
     // Play animation and sound
-    override protected void Play() {
+    override protected void Play(Collider collider) {
         if (m_isOpen) {
             m_animator.Play("Close Anim");
             

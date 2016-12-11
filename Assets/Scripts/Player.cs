@@ -19,7 +19,8 @@ public class Player : MonoBehaviour {
         this.GetComponentInChildren<Light>().enabled = false;
     }
 
-    void Update()
+
+    public void updatePlayer()
     {
         characterController.Move(m_controller.getDisplacement() * Time.deltaTime);
 
