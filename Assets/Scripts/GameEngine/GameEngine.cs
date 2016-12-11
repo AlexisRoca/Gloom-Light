@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class GameEngine : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class GameEngine : MonoBehaviour
     private LightManager m_lightManager;
 
     public Canvas PauseCanvas;
+    public Image[] m_skulls;
 
     public Player m_prefabPlayer;
 
@@ -30,9 +32,17 @@ public class GameEngine : MonoBehaviour
         {
             m_lightManager.update(Time.time);
             for (int i = 0; i < m_players.Length; i++)
+            {
                 m_players[i].updatePlayer();
+                if(m_players[i].gameObject == null)
+                {
+                    m_skulls[i].enabled = true;
+                }
+            }
+                
   
             PauseCanvas.enabled = false;
+
     }
         else
         {
