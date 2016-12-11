@@ -7,13 +7,7 @@ public class Player : MonoBehaviour {
     [HideInInspector] public Controller m_controller;
 
     private bool m_interact;
-    private bool m_lightOn = false;
     private Quaternion m_prevLightOrientation;
-
-    public float m_lightOnCooldown = 3.0f;
-    public float m_lightOnDuration = 1.0f;
-    private float m_lightOnTime;
-    public Animator m_batteryAnimator;
 
     public int m_nbOnLight = 0;
     public int m_nbPressUseless = 0;
@@ -21,10 +15,8 @@ public class Player : MonoBehaviour {
     public int m_nbKill = 0;
     public float m_timeAlife = 0.0f;
 
-    public GameObject m_batteryUI;
 
     private Light light;
-    private Renderer cone;
 
     // Start & Update functions
     void Start()
@@ -32,7 +24,6 @@ public class Player : MonoBehaviour {
         m_characterController = GetComponent<CharacterController>();
 
         light = this.GetComponentInChildren<Light>();
-        cone = this.GetComponentInChildren<Light>().GetComponentInChildren<Renderer>();
 
         light.enabled = false;
         cone.enabled = false;
@@ -73,10 +64,10 @@ public class Player : MonoBehaviour {
         // Get interact input
         m_interact = m_controller.getInteractInput();
 
-        // Turn on the light
-        if (m_controller.getLightInput())
+
+        if((Time.time - m_lightOnTime + m_lightOnDuration) > m_lightOnCooldown)
         {
-            if (!m_lightOn && ((Time.time - m_lightOnTime + m_lightOnDuration) > m_lightOnCooldown))
+            if(m_controller.getLightInput())
             {
                 light.enabled = true;
                 cone.enabled = true;
@@ -84,24 +75,24 @@ public class Player : MonoBehaviour {
                 m_lightOnTime = Time.time;
 
                 m_batteryUI.GetComponent<Animator>().Play("BatteryCharging");
+
                 m_nbOnLight += 1;
             }
-            else
-            {
-                m_nbPressUseless += 1;
-            }
         }
-        else if (m_lightOn && ((Time.time - m_lightOnTime) > m_lightOnDuration))
+        
+        else
+        {
+            if(m_controller.getLightInput())
+                m_nbPressUseless += 1;
+        }
+
+
+        if((Time.time - m_lightOnTime) > m_lightOnDuration)
         {
             light.enabled = false;
             cone.enabled = false;
             m_lightOn = false;
         }
-
-        //if(m_controller.getLightInput())
-        //    this.GetComponentInChildren<Light>().enabled = true;
-        //else
-        //    this.GetComponentInChildren<Light>().enabled = false;
     }
 
     // Class functions
