@@ -53,7 +53,7 @@ public class Player : MonoBehaviour {
         else if (displacementVector.x != 0.0f || displacementVector.z != 0.0f)
         {
             float lightAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
-            this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
+            this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
 
             m_prevLightOrientation = this.GetComponentInChildren<Light>().transform.rotation;
         }
