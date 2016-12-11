@@ -83,13 +83,12 @@ public class GameEngine : MonoBehaviour
         if(debug)
         {
             m_players = new Player[2];
-
             for (int i = 0; i < 2; i++)
             {
                 Player player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
                 player.transform.position = new Vector3(0.0f, 0.5f, 2.0f * i);
 
-                GameObject go = GameObject.Find("GUI_Player" + (i + 1).ToString());
+                GameObject go = GameObject.Find("GUI_Player" + (i+1).ToString());
                 for (int j = 0; j < go.transform.childCount - 1; j++)
                     if (go.transform.GetChild(j).transform.name == "Battery")
                         player.m_batteryUI = go.transform.GetChild(j).gameObject;
@@ -98,6 +97,10 @@ public class GameEngine : MonoBehaviour
                 Pad pad = new Pad();
                 pad.joystickNumber = i + 1;
                 player.m_controller = pad;
+
+                Debug.Log("Materials/Player/Player" + (i + 1).ToString());
+                Debug.Log(Resources.Load("Materials/Player/Player" + (i+1).ToString()));
+                player.setColor((Material) Resources.Load("Materials/Player/Player" + (i+1).ToString()));
 
                 m_players[i] = player;
             }
@@ -118,7 +121,7 @@ public class GameEngine : MonoBehaviour
                 if (!activePlayer)
                     continue;
 
-                Player player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
+                Player player = Instantiate(m_prefabPlayer) as Player;
                 player.transform.position = new Vector3(0.0f, 0.5f, 2.0f*i);
 
                 GameObject go = GameObject.Find("GUI_Player" + (i+1).ToString());
@@ -131,23 +134,7 @@ public class GameEngine : MonoBehaviour
                 pad.joystickNumber = i + 1;
                 player.m_controller = pad;
             
-                switch(i)
-                {
-                    case 0:
-                        player.setColor(m_material1);
-                        break;
-                    case 1:
-                        player.setColor(m_material2);
-                        break;
-                    case 2:
-                        player.setColor(m_material3);
-                        break;
-                    case 3:
-                        player.setColor(m_material4);
-                        break;
-                    default:
-                        break;
-                }
+                player.setColor((Material) Resources.Load("Materials/Player/Player" + i.ToString()));
 
                 m_players[activePlayerIndex] = player;
                 activePlayerIndex++;
@@ -159,7 +146,6 @@ public class GameEngine : MonoBehaviour
     void endGame()
     {
         PersistentData.m_playersStats = m_players;
-
         SceneManager.LoadScene("Final Scene");
     }
 }
