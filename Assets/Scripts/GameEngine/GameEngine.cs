@@ -15,11 +15,16 @@ public class GameEngine : MonoBehaviour
 
     public void Start()
     {
+        loadScene();
 
+        m_lightManager = new LightManager(Time.time);
+        m_lightManager.initLights();
+
+        initPlayers();
     }
 
-	// Update is called once per frame
-	void Update ()
+    // Update is called once per frame
+    void Update ()
     {
         if(! inPause)
         {
