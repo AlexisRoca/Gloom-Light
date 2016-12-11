@@ -39,7 +39,7 @@ public class GameEngine : MonoBehaviour
             int nbSurvivors = 0;
             for (int i = 0; i < m_players.Length; i++)
             {
-                if(m_players[i].gameObject != null)
+                if(m_players[i] != null)
                 {
                     m_players[i].updatePlayer();
                     nbSurvivors += 1;
@@ -52,7 +52,7 @@ public class GameEngine : MonoBehaviour
             }
   
             PauseCanvas.enabled = false;
-    }
+        }
         else
         {
             PauseCanvas.enabled = true;
@@ -79,7 +79,7 @@ public class GameEngine : MonoBehaviour
     void initPlayers()
     {
         int gamepadNb = PersistentData.m_nbActivePlayer;
-        m_players = new Player[PersistentData.m_nbActivePlayer];
+        m_players = new Player[gamepadNb];
         Debug.Log("NB JOUEURS : " + gamepadNb);
 
         int activePlayerIndex = 0; 
@@ -91,15 +91,19 @@ public class GameEngine : MonoBehaviour
             if (!activePlayer)
                 continue;
 
-
             Player player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
-            m_players[activePlayerIndex] = player;
-            m_players[activePlayerIndex].transform.position += m_players[activePlayerIndex].transform.forward * activePlayerIndex * 2;
+            player.transform.position = new Vector3(0.0f, 0.5f, 2.0f*i);
+
+            GameObject go = GameObject.Find("GUI_Player" + (i+1).ToString());
+            for(int j=0; j < go.transform.childCount - 1; j++)
+                if(go.transform.GetChild(j).transform.name == "Battery")
+                    player.m_batteryUI = go.transform.GetChild(j).gameObject;
+              
 
             Pad pad = new Pad();
             pad.joystickNumber = i + 1;
             player.m_controller = pad;
-
+            
             switch(i)
             {
                 case 0:
@@ -118,6 +122,7 @@ public class GameEngine : MonoBehaviour
                     break;
             }
 
+            m_players[activePlayerIndex] = player;
             activePlayerIndex++;
         }
     }

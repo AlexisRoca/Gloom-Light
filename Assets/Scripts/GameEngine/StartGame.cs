@@ -16,8 +16,13 @@ public class StartGame : MonoBehaviour
     void Start ()
     {
         m_boolPlayers = new bool[4];
-        m_torchLights = GameObject.FindGameObjectsWithTag("Torch");
 
+        m_torchLights = new GameObject[4];
+        m_torchLights[0] = GameObject.Find("Torch_1");
+        m_torchLights[1] = GameObject.Find("Torch_2");
+        m_torchLights[2] = GameObject.Find("Torch_3");
+        m_torchLights[3] = GameObject.Find("Torch_4");
+        
         for (int i = 0; i<4; i++)
         {
             m_boolPlayers[i] = false;

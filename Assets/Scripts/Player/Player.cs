@@ -10,9 +10,18 @@ public class Player : MonoBehaviour {
     private bool m_lightOn = false;
     private Quaternion m_prevLightOrientation;
 
-    public float lightOnCooldown = 3.0f;
-    public float lightOnDuration = 1.0f;
-    private float lightOnTime;
+    public float m_lightOnCooldown = 3.0f;
+    public float m_lightOnDuration = 1.0f;
+    private float m_lightOnTime;
+    public Animator m_batteryAnimator;
+
+    public int m_nbOnLight = 0;
+    public int m_nbPressUseless = 0;
+    public int m_nbInterraction = 0;
+    public int m_nbKill = 0;
+    public float m_timeAlife = 0.0f;
+
+    public GameObject m_batteryUI;
 
     // Start & Update functions
     void Start()
@@ -23,13 +32,12 @@ public class Player : MonoBehaviour {
 
     public void updatePlayer()
     {
+        // Increase Time Alife
+        m_timeAlife += Time.deltaTime;
+
         // Get angle of right and left stick
         Vector3 displacementVector = m_controller.getDisplacement();
         Vector2 aimVector = m_controller.getAngleTorchlight();
-
-        // Get all input button
-        m_interact = m_controller.getInteractInput();
-        m_lightOn  = m_controller.getLightInput();
 
         // Move character
         m_characterController.Move(displacementVector * Time.deltaTime);
@@ -42,43 +50,48 @@ public class Player : MonoBehaviour {
 
             m_prevLightOrientation = this.GetComponentInChildren<Light>().transform.rotation;
         }
-        else if(displacementVector.x != 0.0f || displacementVector.z != 0.0f)
+        else if (displacementVector.x != 0.0f || displacementVector.z != 0.0f)
         {
-            float characterAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
-            this.transform.localEulerAngles = new Vector3(0.0f, characterAngle, 0.0f);
-
-            //float lightAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
-            //this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
+            float lightAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
+            this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
 
             m_prevLightOrientation = this.GetComponentInChildren<Light>().transform.rotation;
         }
         else
+        {
             this.GetComponentInChildren<Light>().transform.rotation = m_prevLightOrientation;
+        }
+
+        // Get interact input
+        m_interact = m_controller.getInteractInput();
 
         // Turn on the light
-        //if(m_controller.getLightInput() && !m_lightOn && ((Time.time-lightOnTime+lightOnDuration) > lightOnCooldown))
-        //{
-        //    this.GetComponentInChildren<Light>().enabled = true;
-        //    m_lightOn = true;
-        //    lightOnTime = Time.time;
-        //}
-        //else if(m_lightOn && ((Time.time-lightOnTime) > lightOnDuration))
-        //{
-        //    this.GetComponentInChildren<Light>().enabled = false;
-        //    m_lightOn = false;
-        //}
-
-        // To comment
         if (m_controller.getLightInput())
         {
-            this.GetComponentInChildren<Light>().enabled = true;
-            this.GetComponentInChildren<Light>().GetComponentInChildren<MeshRenderer>().enabled = true;
+            if (!m_lightOn && ((Time.time - m_lightOnTime + m_lightOnDuration) > m_lightOnCooldown))
+            {
+                this.GetComponentInChildren<Light>().enabled = true;
+                m_lightOn = true;
+                m_lightOnTime = Time.time;
+
+                m_batteryUI.GetComponent<Animator>().Play("BatteryCharging");
+                m_nbOnLight += 1;
+            }
+            else
+            {
+                m_nbPressUseless += 1;
+            }
         }
-        else
+        else if (m_lightOn && ((Time.time - m_lightOnTime) > m_lightOnDuration))
         {
             this.GetComponentInChildren<Light>().enabled = false;
-            this.GetComponentInChildren<Light>().GetComponentInChildren<MeshRenderer>().enabled = false;
+            m_lightOn = false;
         }
+
+        //if(m_controller.getLightInput())
+        //    this.GetComponentInChildren<Light>().enabled = true;
+        //else
+        //    this.GetComponentInChildren<Light>().enabled = false;
     }
 
     // Class functions
