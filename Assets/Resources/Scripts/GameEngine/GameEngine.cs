@@ -50,7 +50,7 @@ public class GameEngine : MonoBehaviour
 
             if(nbSurvivors == 1)
             {
-                endGame();
+                //endGame();
             }
   
             PauseCanvas.enabled = false;

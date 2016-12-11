@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using EZCameraShake;
 
 public class LightManager
 {
@@ -25,6 +26,11 @@ public class LightManager
     private float m_lightningDuration = 0.3f;
     private float m_lightningIntensity = 3.5f;
     private bool m_lightningOn;
+
+    private float Magnitude = 2.5f;
+    private float Roughness = 13.5f;
+    private float FadeInTime = 0.5f;
+    private float FadeOutTime = 1.0f;
 
     public LightManager(float gameTime)
     {
@@ -120,7 +126,9 @@ public class LightManager
                     m_timeSinceLastLightning = gameTime;
                     m_currentLightningNumber++;
 
-                    for(int i = 0; i < m_windowsLights.Length; i++)
+                    CameraShaker.Instance.ShakeOnce(Magnitude, Roughness, FadeInTime, FadeOutTime);
+
+                    for (int i = 0; i < m_windowsLights.Length; i++)
                         m_windowsLights[i].intensity = m_lightningIntensity;
                 }
             }
