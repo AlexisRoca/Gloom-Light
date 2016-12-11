@@ -40,19 +40,11 @@ public class GameEngine : MonoBehaviour
                 }
             }
 
-<<<<<<< HEAD
-            if(nbSurvivors == 1)
-            {
-                //endGame();
-            }
-  
-            PauseCanvas.enabled = false;
-=======
+
             if(!debug)
                 if(nbSurvivors == 1)
                     endGame();
 
->>>>>>> d7cbd0311ae6b9932a68b49e81d05a76d4482424
         }
         else
         {
