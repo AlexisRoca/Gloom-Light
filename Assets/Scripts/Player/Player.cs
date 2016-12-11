@@ -17,7 +17,7 @@ public class Player : MonoBehaviour {
     public int m_nbPressUseless = 0;
     public int m_nbInterraction = 0;
     public int m_nbKill = 0;
-    private float m_timeAlife = 0.0f;
+    public float m_timeAlife = 0.0f;
 
 
     // Start & Update functions
