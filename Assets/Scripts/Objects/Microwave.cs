@@ -32,12 +32,12 @@ public class Microwave : AbstractActiveObject
             m_timer += Time.deltaTime;
 
             if (m_timer > m_timeDuration)
-                Play();
+                Play(null);
         }
     }
 
     // Play animation and sound
-    override protected void Play()
+    override protected void Play(Collider collider)
     {
         if (m_isActive)
         {
