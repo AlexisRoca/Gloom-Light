@@ -31,7 +31,7 @@ public class DisplayPlayersStats : MonoBehaviour {
         getStats();
 
         killText.text = "Player " + kill.id + " with " + (int)kill.max + " kill";
-        alifeText.text = "Player " + alife.id + " with " + alife.max / 1000.0f + " seconds survive";
+        alifeText.text = "Player " + alife.id + " with " + (int)alife.max + " seconds survive";
         interractionText.text = "Player " + interraction.id + " with " + (int)interraction.max + " interractions";
         lightOnText.text = "Player " + lightOn.id + " with " + (int)lightOn.max + " torch turns on";
         uselessPressText.text = "Player " + uselessPress.id + " with " + (int)uselessPress.max + " useless press";

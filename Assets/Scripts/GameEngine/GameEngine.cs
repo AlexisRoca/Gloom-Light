@@ -34,7 +34,7 @@ public class GameEngine : MonoBehaviour
             int nbSurvivors = 0;
             for (int i = 0; i < m_players.Length; i++)
             {
-                if(m_players[i].gameObject != null)
+                if(m_players[i] != null)
                 {
                     m_players[i].updatePlayer();
                     nbSurvivors += 1;
@@ -43,11 +43,11 @@ public class GameEngine : MonoBehaviour
 
             if(nbSurvivors == 1)
             {
-                //endGame();
+                endGame();
             }
   
             PauseCanvas.enabled = false;
-    }
+        }
         else
         {
             PauseCanvas.enabled = true;
@@ -74,7 +74,7 @@ public class GameEngine : MonoBehaviour
     void initPlayers()
     {
         int gamepadNb = PersistentData.m_nbActivePlayer;
-        m_players = new Player[PersistentData.m_nbActivePlayer];
+        m_players = new Player[gamepadNb];
         Debug.Log("NB JOUEURS : " + gamepadNb);
 
         int activePlayerIndex = 0; 
@@ -87,7 +87,7 @@ public class GameEngine : MonoBehaviour
                 continue;
 
             Player player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
-            player.transform.position += player.transform.forward * activePlayerIndex * 2;
+            player.transform.position = new Vector3(0.0f, 0.5f, 2.0f*i);
 
             GameObject go = GameObject.Find("GUI_Player" + (i+1).ToString());
             for(int j=0; j < go.transform.childCount - 1; j++)
