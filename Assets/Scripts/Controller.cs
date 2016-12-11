@@ -5,7 +5,7 @@ abstract public class Controller {
 
     protected Vector3 movementVector;
     protected Vector2 aimVector;
-    protected float movementSpeed = 8;
+    protected float movementSpeed = 10.0f;
 
     abstract public Vector3 getDisplacement();
     abstract public Vector2 getAngleTorchlight();

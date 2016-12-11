@@ -3,10 +3,11 @@ using System.Collections;
 
 public class Player : MonoBehaviour {
 
-    protected CharacterController characterController;
+    protected CharacterController m_characterController;
     public Controller m_controller;
     private bool m_interact;
     private bool m_lightOn = false;
+    private Quaternion m_prevLightOrientation;
 
     public float lightOnCooldown = 3.0f;
     public float lightOnDuration = 1.0f;
@@ -15,41 +16,57 @@ public class Player : MonoBehaviour {
     // Start & Update functions
     void Start()
     {
-        characterController = GetComponent<CharacterController>();
+        m_characterController = GetComponent<CharacterController>();
         this.GetComponentInChildren<Light>().enabled = false;
     }
 
 
     public void updatePlayer()
     {
-        characterController.Move(m_controller.getDisplacement() * Time.deltaTime);
-
-        m_interact = m_controller.getInteractInput();
-
-        if(m_controller.getLightInput() && !m_lightOn && ((Time.time-lightOnTime+lightOnDuration) > lightOnCooldown))
-        {
-            this.GetComponentInChildren<Light>().enabled = true;
-            m_lightOn = true;
-            lightOnTime = Time.time;
-        }
-
-        else if(m_lightOn && ((Time.time-lightOnTime) > lightOnDuration))
-        {
-            this.GetComponentInChildren<Light>().enabled = false;
-            m_lightOn = false;
-        }
-
+        // Get angle of right and left stick
+        Vector3 displacementVector = m_controller.getDisplacement();
         Vector2 aimVector = m_controller.getAngleTorchlight();
 
-        if (aimVector.x != 0.0f || aimVector.y != 0.0f)
+        // Move character
+        m_characterController.Move(displacementVector * Time.deltaTime);
+
+        // Aim
+        if(aimVector.x != 0.0f || aimVector.y != 0.0f)
         {
             float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
             this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
         }
+        else if (displacementVector.x != 0.0f || displacementVector.z != 0.0f)
+        {
+            float lightAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
+            this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
+            m_prevLightOrientation = this.GetComponentInChildren<Light>().transform.rotation;
+        }
+        else
+        {
+            this.GetComponentInChildren<Light>().transform.rotation = m_prevLightOrientation;
+        }
 
+        // Get interact input
+        m_interact = m_controller.getInteractInput();
 
+        // Turn on the light
+        //if(m_controller.getLightInput() && !m_lightOn && ((Time.time-lightOnTime+lightOnDuration) > lightOnCooldown))
+        //{
+        //    this.GetComponentInChildren<Light>().enabled = true;
+        //    m_lightOn = true;
+        //    lightOnTime = Time.time;
+        //}
+        //else if(m_lightOn && ((Time.time-lightOnTime) > lightOnDuration))
+        //{
+        //    this.GetComponentInChildren<Light>().enabled = false;
+        //    m_lightOn = false;
+        //}
 
-
+        if(m_controller.getLightInput())
+            this.GetComponentInChildren<Light>().enabled = true;
+        else
+            this.GetComponentInChildren<Light>().enabled = false;
     }
 
     // Class functions
