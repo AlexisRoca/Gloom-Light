@@ -34,7 +34,7 @@ public class GameEngine : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
-        if(! inPause)
+        if(!inPause)
         {
             m_lightManager.update(Time.time);
 
@@ -82,6 +82,8 @@ public class GameEngine : MonoBehaviour
     {
         if(debug)
         {
+            m_players = new Player[2];
+
             for (int i = 0; i < 2; i++)
             {
                 Player player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
@@ -96,6 +98,8 @@ public class GameEngine : MonoBehaviour
                 Pad pad = new Pad();
                 pad.joystickNumber = i + 1;
                 player.m_controller = pad;
+
+                m_players[i] = player;
             }
         }
 
@@ -148,7 +152,6 @@ public class GameEngine : MonoBehaviour
                 m_players[activePlayerIndex] = player;
                 activePlayerIndex++;
             }
-
         }
     }
 
