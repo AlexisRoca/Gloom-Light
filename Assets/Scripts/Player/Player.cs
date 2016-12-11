@@ -9,9 +9,10 @@ public class Player : MonoBehaviour {
     private bool m_lightOn = false;
     private Quaternion m_prevLightOrientation;
 
-    public float lightOnCooldown = 3.0f;
-    public float lightOnDuration = 1.0f;
-    private float lightOnTime;
+    public float m_lightOnCooldown = 3.0f;
+    public float m_lightOnDuration = 1.0f;
+    private float m_lightOnTime;
+    public Animator m_batteryAnimator;
 
     public int m_nbOnLight = 0;
     public int m_nbPressUseless = 0;
@@ -19,6 +20,7 @@ public class Player : MonoBehaviour {
     public int m_nbKill = 0;
     public float m_timeAlife = 0.0f;
 
+    public GameObject m_batteryUI;
 
     // Start & Update functions
     void Start()
@@ -63,12 +65,13 @@ public class Player : MonoBehaviour {
         // Turn on the light
         if (m_controller.getLightInput())
         {
-            if (!m_lightOn && ((Time.time - lightOnTime + lightOnDuration) > lightOnCooldown))
+            if (!m_lightOn && ((Time.time - m_lightOnTime + m_lightOnDuration) > m_lightOnCooldown))
             {
                 this.GetComponentInChildren<Light>().enabled = true;
                 m_lightOn = true;
-                lightOnTime = Time.time;
+                m_lightOnTime = Time.time;
 
+                m_batteryUI.GetComponent<Animator>().Play("BatteryCharging");
                 m_nbOnLight += 1;
             }
             else
@@ -76,7 +79,7 @@ public class Player : MonoBehaviour {
                 m_nbPressUseless += 1;
             }
         }
-        else if (m_lightOn && ((Time.time - lightOnTime) > lightOnDuration))
+        else if (m_lightOn && ((Time.time - m_lightOnTime) > m_lightOnDuration))
         {
             this.GetComponentInChildren<Light>().enabled = false;
             m_lightOn = false;
