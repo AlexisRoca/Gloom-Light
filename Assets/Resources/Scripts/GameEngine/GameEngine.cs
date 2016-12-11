@@ -125,7 +125,7 @@ public class GameEngine : MonoBehaviour
                 pad.joystickNumber = i + 1;
                 player.m_controller = pad;
             
-                player.setColor((Material) Resources.Load("Materials/Player/Player" + i.ToString()));
+                player.setColor((Material) Resources.Load("Materials/Player/Player" + (i+1).ToString()));
 
                 m_players[activePlayerIndex] = player;
                 activePlayerIndex++;
