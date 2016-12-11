@@ -43,7 +43,7 @@ public class GameEngine : MonoBehaviour
 
             if(nbSurvivors == 1)
             {
-                endGame();
+                //endGame();
             }
   
             PauseCanvas.enabled = false;
@@ -86,15 +86,20 @@ public class GameEngine : MonoBehaviour
             if (!activePlayer)
                 continue;
 
-
             Player player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
-            m_players[activePlayerIndex] = player;
-            m_players[activePlayerIndex].transform.position += m_players[activePlayerIndex].transform.forward * activePlayerIndex * 2;
+            player.transform.position += player.transform.forward * activePlayerIndex * 2;
+
+            GameObject go = GameObject.Find("GUI_Player" + (i+1).ToString());
+            for(int j=0; j < go.transform.childCount - 1; j++)
+                if(go.transform.GetChild(j).transform.name == "Battery")
+                    player.m_batteryUI = go.transform.GetChild(j).gameObject;
+              
 
             Pad pad = new Pad();
             pad.joystickNumber = i + 1;
             player.m_controller = pad;
 
+            m_players[activePlayerIndex] = player;
             activePlayerIndex++;
         }
     }
