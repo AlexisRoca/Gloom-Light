@@ -4,8 +4,10 @@ using UnityEngine.SceneManagement;
 
 public class StartGame : MonoBehaviour
 {
+    public string nextScene;
     public Light[] m_torchLights;
     private bool[] m_boolPlayers;
+
 
     // Use this for initialization
     void Start ()
@@ -47,6 +49,6 @@ public class StartGame : MonoBehaviour
                 PersistentData.m_nbActivePlayer++;
         }
 
-        SceneManager.LoadScene("Scene Martin");
+        SceneManager.LoadScene(nextScene);
     }
 }
