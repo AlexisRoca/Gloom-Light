@@ -18,7 +18,10 @@ public class TorchKill : MonoBehaviour {
             if (Physics.Raycast(origin, direction, out hit))
             {
                 if (hit.collider.gameObject == collider.gameObject)
+                {
+                    m_player.m_nbKill += 1;
                     Destroy(collider.gameObject);
+                }
             }
         }
     }

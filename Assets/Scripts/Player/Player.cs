@@ -13,6 +13,13 @@ public class Player : MonoBehaviour {
     public float lightOnDuration = 1.0f;
     private float lightOnTime;
 
+    public int m_nbOnLight = 0;
+    public int m_nbPressUseless = 0;
+    public int m_nbInterraction = 0;
+    public int m_nbKill = 0;
+    private float m_timeAlife = 0.0f;
+
+
     // Start & Update functions
     void Start()
     {
@@ -23,6 +30,9 @@ public class Player : MonoBehaviour {
 
     public void updatePlayer()
     {
+        // Increase Time Alife
+        m_timeAlife += Time.deltaTime;
+
         // Get angle of right and left stick
         Vector3 displacementVector = m_controller.getDisplacement();
         Vector2 aimVector = m_controller.getAngleTorchlight();
@@ -51,22 +61,31 @@ public class Player : MonoBehaviour {
         m_interact = m_controller.getInteractInput();
 
         // Turn on the light
-        //if(m_controller.getLightInput() && !m_lightOn && ((Time.time-lightOnTime+lightOnDuration) > lightOnCooldown))
-        //{
-        //    this.GetComponentInChildren<Light>().enabled = true;
-        //    m_lightOn = true;
-        //    lightOnTime = Time.time;
-        //}
-        //else if(m_lightOn && ((Time.time-lightOnTime) > lightOnDuration))
-        //{
-        //    this.GetComponentInChildren<Light>().enabled = false;
-        //    m_lightOn = false;
-        //}
+        if (m_controller.getLightInput())
+        {
+            if (!m_lightOn && ((Time.time - lightOnTime + lightOnDuration) > lightOnCooldown))
+            {
+                this.GetComponentInChildren<Light>().enabled = true;
+                m_lightOn = true;
+                lightOnTime = Time.time;
 
-        if(m_controller.getLightInput())
-            this.GetComponentInChildren<Light>().enabled = true;
-        else
+                m_nbOnLight += 1;
+            }
+            else
+            {
+                m_nbPressUseless += 1;
+            }
+        }
+        else if (m_lightOn && ((Time.time - lightOnTime) > lightOnDuration))
+        {
             this.GetComponentInChildren<Light>().enabled = false;
+            m_lightOn = false;
+        }
+
+        //if(m_controller.getLightInput())
+        //    this.GetComponentInChildren<Light>().enabled = true;
+        //else
+        //    this.GetComponentInChildren<Light>().enabled = false;
     }
 
     // Class functions
