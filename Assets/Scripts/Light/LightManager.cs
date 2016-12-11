@@ -120,7 +120,7 @@ public class LightManager
                     m_currentLightningNumber++;
 
                     for(int i = 0; i < m_windowsLights.Length; i++)
-                        m_windowsLights[i].intensity = 2.0f;
+                        m_windowsLights[i].intensity = 5.0f;
                 }
             }
             break;
