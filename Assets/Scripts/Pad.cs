@@ -29,7 +29,6 @@ public class Pad : Controller
     public override bool getInteractInput()
     {
         joystickString = joystickNumber.ToString();
-
         return Input.GetButtonDown("InteractButton_p" + joystickString);
     }
 

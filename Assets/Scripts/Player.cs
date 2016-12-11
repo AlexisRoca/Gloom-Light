@@ -8,10 +8,15 @@ public class Player : MonoBehaviour {
     private bool m_interact;
     private bool m_lightOn = false;
 
+    public float lightOnCooldown = 3.0f;
+    public float lightOnDuration = 1.0f;
+    private float lightOnTime;
+
     // Start & Update functions
     void Start()
     {
         characterController = GetComponent<CharacterController>();
+        this.GetComponentInChildren<Light>().enabled = false;
     }
 
     void Update()
@@ -19,12 +24,19 @@ public class Player : MonoBehaviour {
         characterController.Move(m_controller.getDisplacement() * Time.deltaTime);
 
         m_interact = m_controller.getInteractInput();
-        m_lightOn = m_controller.getLightInput();
 
-        if(m_lightOn)
+        if(m_controller.getLightInput() && !m_lightOn && ((Time.time-lightOnTime+lightOnDuration) > lightOnCooldown))
+        {
             this.GetComponentInChildren<Light>().enabled = true;
-        else
+            m_lightOn = true;
+            lightOnTime = Time.time;
+        }
+
+        else if(m_lightOn && ((Time.time-lightOnTime) > lightOnDuration))
+        {
             this.GetComponentInChildren<Light>().enabled = false;
+            m_lightOn = false;
+        }
 
         Vector2 aimVector = m_controller.getAngleTorchlight();
 
@@ -33,25 +45,16 @@ public class Player : MonoBehaviour {
             float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
             this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
         }
+
+
+
+
     }
 
     // Class functions
     public Player(Controller controller)
     {
         m_controller = controller;
-        Debug.Log("Creating Player");
-    }
-
-    void OnTriggerEnter(Collider collider)
-    {
-        Debug.Log("collider name : " + collider.gameObject.name);
-
-        if (collider.gameObject.tag == "ConeLight")
-        {
-            //Destroy(this.gameObject);
-            Debug.Log("MOOOOOOOORT _ collider.gameObject.name : " + collider.gameObject.name);
-            Debug.Log("collider.gameObject.tag : " + collider.gameObject.tag);
-        }
     }
 
     public bool getInteract()

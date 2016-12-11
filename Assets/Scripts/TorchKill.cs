@@ -10,13 +10,16 @@ public class TorchKill : MonoBehaviour {
     {
         if (collider.gameObject.tag == "Player" && m_OurCollider != collider && m_player.getLightOn())
         {
-            Destroy(collider.gameObject);
-            Debug.Log(collider.gameObject.name + " is DEAD !");
-        }
+            // Try if there is no obstable between both players
+            RaycastHit hit;
+            Vector3 origin = m_player.transform.position;
+            Vector3 direction = (collider.transform.position - m_player.transform.position).normalized;
 
-        if(m_OurCollider == collider)
-        {
-            Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH");
+            if (Physics.Raycast(origin, direction, out hit))
+            {
+                if (hit.collider.gameObject == collider.gameObject)
+                    Destroy(collider.gameObject);
+            }
         }
     }
 }

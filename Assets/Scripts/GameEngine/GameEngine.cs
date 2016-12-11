@@ -12,18 +12,18 @@ public class GameEngine : MonoBehaviour
 
     private void Awake()
     {
+
+    }
+
+    // Use this for initialization
+    void Start ()
+    {
         loadScene();
 
         m_lightManager = new LightManager(Time.time);
         m_lightManager.initLights();
 
         initPlayers();
-    }
-
-    // Use this for initialization
-    void Start ()
-    {
-  
     }
 	
 	// Update is called once per frame
@@ -41,13 +41,14 @@ public class GameEngine : MonoBehaviour
 
     void initPlayers()
     {
+        // Deprecated
         int gamepadNb = Input.GetJoystickNames().Length;
         m_players = new Player[gamepadNb];
 
         for(int i=0; i<gamepadNb; i++)
         {
             Player player = m_players[i];
-            player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
+            player = Instantiate(m_prefabPlayer) as Player;
 
             Pad pad = new Pad();
             pad.joystickNumber = i+1;
