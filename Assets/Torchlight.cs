@@ -16,10 +16,11 @@ public class Torchlight : MonoBehaviour
 
     private Light m_light;
     private Renderer m_cone;
+    private Image m_batteryLightning;
     public GameObject m_batteryUI;
 
     public float m_waitForStartDuration = 5.0f;
-    public float m_lightOnCooldown = 3.0f;
+    public float m_lightCooldown = 3.0f;
     public float m_lightOnDuration = 1.0f;
     private float m_lightOnTime;
 
@@ -28,12 +29,22 @@ public class Torchlight : MonoBehaviour
         m_substate = Substate.WaitForStart;
         m_light = this.GetComponentInChildren<Light>();
         m_cone = this.GetComponentInChildren<Light>().GetComponentInChildren<Renderer>();
+
+        for(int j = 0; j < m_batteryUI.transform.childCount; j++)
+            if(m_batteryUI.transform.GetChild(j).transform.name == "LightningIcon")
+                m_batteryLightning = m_batteryUI.transform.GetChild(j).GetComponent<Image>();
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
         m_substate = checkChangeSubstate();
+
+        if(m_substate == Substate.Cooldown)
+        {
+            float alpha = Mathf.Lerp(0.0f,1.0f,(Time.time-m_lightOnTime-m_lightOnDuration) /m_lightCooldown);
+            m_batteryUI.GetComponent<Image>().color = new Color(1.0f,1.0f,1.0f,alpha);
+        }
     }
 
     public bool setOn()
@@ -42,8 +53,11 @@ public class Torchlight : MonoBehaviour
             return false;
 
         m_light.enabled = true;
+        m_cone.enabled = true;
         m_lightOnTime = Time.time;
-        m_batteryUI.GetComponentInChildren<Image>().enabled = false;
+
+        m_batteryLightning.enabled = false;
+        m_batteryUI.GetComponent<Image>().enabled = false;
         return true;
     }
 
@@ -65,17 +79,18 @@ public class Torchlight : MonoBehaviour
             if((Time.time - m_lightOnTime) > m_lightOnDuration)
             {
                 m_light.enabled = false;
-                m_batteryUI.GetComponent<Animator>().Play("BatteryCharging");
+                m_cone.enabled = false;
+
+                m_batteryUI.GetComponent<Image>().enabled = true;
                 return Substate.Cooldown;
             }
             break;
 
             case Substate.Cooldown:
-            if((Time.time - m_lightOnTime + m_lightOnDuration) > m_lightOnCooldown)
+            if((Time.time - m_lightOnTime - m_lightOnDuration) > m_lightCooldown)
             {
                 //Draw lightning
-                m_batteryUI.GetComponentInChildren<Image>().enabled = true;
-
+                m_batteryLightning.enabled = true;
                 return Substate.Ready;
             }
             break;
