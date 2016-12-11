@@ -14,7 +14,8 @@ public class Player : MonoBehaviour {
         characterController = GetComponent<CharacterController>();
     }
 
-    void Update()
+
+    public void updatePlayer()
     {
         characterController.Move(m_controller.getDisplacement() * Time.deltaTime);
 

@@ -13,10 +13,5 @@ public class TorchKill : MonoBehaviour {
             Destroy(collider.gameObject);
             Debug.Log(collider.gameObject.name + " is DEAD !");
         }
-
-        if(m_OurCollider == collider)
-        {
-            Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH");
-        }
     }
 }

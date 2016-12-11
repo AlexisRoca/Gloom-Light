@@ -7,10 +7,13 @@ public class GameEngine : MonoBehaviour
     private Player [] m_players;
     private LightManager m_lightManager;
 
+    public Canvas PauseCanvas;
+
     public Player m_prefabPlayer;
 
+    public bool inPause = false;
 
-    private void Awake()
+    public void Start()
     {
         loadScene();
 
@@ -19,17 +22,32 @@ public class GameEngine : MonoBehaviour
 
         initPlayers();
     }
-
-    // Use this for initialization
-    void Start ()
-    {
-  
-    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        m_lightManager.update(Time.time);
+        if(! inPause)
+        {
+            m_lightManager.update(Time.time);
+            for (int i = 0; i < m_players.Length; i++)
+                m_players[i].updatePlayer();
+
+            PauseCanvas.enabled = false;
+        }
+        else
+        {
+            PauseCanvas.enabled = true;
+
+            // Exit Game Condition
+            for (int i = 0; i < m_players.Length; i++)
+                if (m_players[i].m_controller.getExitInput())
+                    Application.Quit();
+        }
+
+        // Pause gestion
+        for (int i = 0; i < m_players.Length; i++)
+            if (m_players[i].m_controller.getPauseInput())
+                inPause = !inPause;
     }
 
 
@@ -41,17 +59,29 @@ public class GameEngine : MonoBehaviour
 
     void initPlayers()
     {
-        int gamepadNb = Input.GetJoystickNames().Length;
-        m_players = new Player[gamepadNb];
+        int gamepadNb = PersistentData.m_nbActivePlayer;
+        m_players = new Player[PersistentData.m_nbActivePlayer];
+        Debug.Log("NB JOUEURS : " + gamepadNb);
 
-        for(int i=0; i<gamepadNb; i++)
+        int activePlayerIndex = 0; 
+
+        for (int i = 0; i < 4; i++)
         {
-            Player player = m_players[i];
-            player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
+            bool activePlayer = PersistentData.m_activePlayers[i];
+
+            if (!activePlayer)
+                continue;
+
+
+            Player player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
+            m_players[activePlayerIndex] = player;
+            m_players[activePlayerIndex].transform.position += m_players[activePlayerIndex].transform.forward * activePlayerIndex * 2;
 
             Pad pad = new Pad();
-            pad.joystickNumber = i+1;
+            pad.joystickNumber = i + 1;
             player.m_controller = pad;
+
+            activePlayerIndex++;
         }
-    }    
+    }
 }

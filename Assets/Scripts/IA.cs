@@ -23,4 +23,14 @@ public class IA : Controller
     {
         throw new NotImplementedException();
     }
+
+    public override bool getPauseInput()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override bool getExitInput()
+    {
+        throw new NotImplementedException();
+    }
 }

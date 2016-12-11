@@ -11,4 +11,6 @@ abstract public class Controller {
     abstract public Vector2 getAngleTorchlight();
     abstract public bool getInteractInput();
     abstract public bool getLightInput();
+    abstract public bool getPauseInput();
+    abstract public bool getExitInput();
 }
