@@ -23,6 +23,7 @@ public class LightManager
     private float m_timeSinceLastLightning;
     private float m_lightningCooldown = 10.0f;
     private float m_lightningDuration = 0.3f;
+    private float m_lightningIntensity = 3.5f;
     private bool m_lightningOn;
 
     public LightManager(float gameTime)
@@ -120,7 +121,7 @@ public class LightManager
                     m_currentLightningNumber++;
 
                     for(int i = 0; i < m_windowsLights.Length; i++)
-                        m_windowsLights[i].intensity = 5.0f;
+                        m_windowsLights[i].intensity = m_lightningIntensity;
                 }
             }
             break;
