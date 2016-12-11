@@ -27,6 +27,10 @@ public class Player : MonoBehaviour {
         Vector3 displacementVector = m_controller.getDisplacement();
         Vector2 aimVector = m_controller.getAngleTorchlight();
 
+        // Get all input button
+        m_interact = m_controller.getInteractInput();
+        m_lightOn  = m_controller.getLightInput();
+
         // Move character
         m_characterController.Move(displacementVector * Time.deltaTime);
 
@@ -34,21 +38,20 @@ public class Player : MonoBehaviour {
         if(aimVector.x != 0.0f || aimVector.y != 0.0f)
         {
             float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
-            this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
+            this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
         }
-        else if (displacementVector.x != 0.0f || displacementVector.z != 0.0f)
+        else if(displacementVector.x != 0.0f || displacementVector.z != 0.0f)
         {
-            float lightAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
-            this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
+            float characterAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
+            this.transform.localEulerAngles = new Vector3(0.0f, characterAngle, 0.0f);
+
+            //float lightAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
+            //this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
+
             m_prevLightOrientation = this.GetComponentInChildren<Light>().transform.rotation;
         }
         else
-        {
             this.GetComponentInChildren<Light>().transform.rotation = m_prevLightOrientation;
-        }
-
-        // Get interact input
-        m_interact = m_controller.getInteractInput();
 
         // Turn on the light
         //if(m_controller.getLightInput() && !m_lightOn && ((Time.time-lightOnTime+lightOnDuration) > lightOnCooldown))
@@ -63,10 +66,17 @@ public class Player : MonoBehaviour {
         //    m_lightOn = false;
         //}
 
-        if(m_controller.getLightInput())
+        // To comment
+        if (m_controller.getLightInput())
+        {
             this.GetComponentInChildren<Light>().enabled = true;
+            this.GetComponentInChildren<Light>().GetComponentInChildren<MeshRenderer>().enabled = true;
+        }
         else
+        {
             this.GetComponentInChildren<Light>().enabled = false;
+            this.GetComponentInChildren<Light>().GetComponentInChildren<MeshRenderer>().enabled = false;
+        }
     }
 
     // Class functions
