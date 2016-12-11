@@ -90,8 +90,10 @@ public class GameEngine : MonoBehaviour
 
                 GameObject go = GameObject.Find("GUI_Player" + (i+1).ToString());
                 for (int j = 0; j < go.transform.childCount - 1; j++)
-                    if (go.transform.GetChild(j).transform.name == "Battery")
-                        player.m_batteryUI = go.transform.GetChild(j).gameObject;
+                    if(go.transform.GetChild(j).transform.name == "Battery")
+                    {
+                        player.m_torchlight.GetComponent<Torchlight>().m_batteryUI = go.transform.GetChild(j).gameObject;
+                    }
 
 
                 Pad pad = new Pad();
@@ -127,8 +129,8 @@ public class GameEngine : MonoBehaviour
                 GameObject go = GameObject.Find("GUI_Player" + (i+1).ToString());
                 for(int j=0; j < go.transform.childCount - 1; j++)
                     if(go.transform.GetChild(j).transform.name == "Battery")
-                        player.m_batteryUI = go.transform.GetChild(j).gameObject;
-              
+                        player.m_torchlight.GetComponent<Torchlight>().m_batteryUI = go.transform.GetChild(j).gameObject;
+
 
                 Pad pad = new Pad();
                 pad.joystickNumber = i + 1;

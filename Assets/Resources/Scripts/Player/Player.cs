@@ -16,17 +16,17 @@ public class Player : MonoBehaviour {
     public float m_timeAlife = 0.0f;
 
 
-    private Light light;
+    public GameObject m_torchlight;
+
+    private void Awake()
+    {
+        m_torchlight = this.transform.GetChild(0).gameObject;
+    }
 
     // Start & Update functions
     void Start()
     {
         m_characterController = GetComponent<CharacterController>();
-
-        light = this.GetComponentInChildren<Light>();
-
-        light.enabled = false;
-        cone.enabled = false;
     }
 
     public void updatePlayer()
@@ -47,51 +47,28 @@ public class Player : MonoBehaviour {
             float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
             this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
 
-            m_prevLightOrientation = light.transform.rotation;
+            m_prevLightOrientation = m_torchlight.transform.rotation;
         }
         else if (displacementVector.x != 0.0f || displacementVector.z != 0.0f)
         {
             float lightAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
             this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
 
-            m_prevLightOrientation = light.transform.rotation;
+            m_prevLightOrientation = m_torchlight.transform.rotation;
         }
         else
         {
-            light.transform.rotation = m_prevLightOrientation;
+            m_torchlight.transform.rotation = m_prevLightOrientation;
         }
 
         // Get interact input
         m_interact = m_controller.getInteractInput();
 
 
-        if((Time.time - m_lightOnTime + m_lightOnDuration) > m_lightOnCooldown)
+        if(m_controller.getLightInput())
         {
-            if(m_controller.getLightInput())
-            {
-                light.enabled = true;
-                cone.enabled = true;
-                m_lightOn = true;
-                m_lightOnTime = Time.time;
-
-                m_batteryUI.GetComponent<Animator>().Play("BatteryCharging");
-
-                m_nbOnLight += 1;
-            }
-        }
-        
-        else
-        {
-            if(m_controller.getLightInput())
+            if(!m_torchlight.GetComponent<Torchlight>().setOn())
                 m_nbPressUseless += 1;
-        }
-
-
-        if((Time.time - m_lightOnTime) > m_lightOnDuration)
-        {
-            light.enabled = false;
-            cone.enabled = false;
-            m_lightOn = false;
         }
     }
 
@@ -108,11 +85,6 @@ public class Player : MonoBehaviour {
 
     public bool getInteract()
     { return m_interact; }
-    public void setInteract(bool interact)
-    { interact = m_interact; }
-
     public bool getLightOn()
-    { return m_lightOn; }
-    public void setLightOn(bool lightOn)
-    { lightOn = m_lightOn; }
+    { return m_torchlight.GetComponent<Light>().enabled; }
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Torchlight : MonoBehaviour
 {
@@ -13,9 +14,9 @@ public class Torchlight : MonoBehaviour
 
     private Substate m_substate;
 
-    public GameObject m_batteryUI;
-    public Light m_light;
+    private Light m_light;
     private Renderer m_cone;
+    public GameObject m_batteryUI;
 
     public float m_waitForStartDuration = 5.0f;
     public float m_lightOnCooldown = 3.0f;
@@ -42,6 +43,7 @@ public class Torchlight : MonoBehaviour
 
         m_light.enabled = true;
         m_lightOnTime = Time.time;
+        m_batteryUI.GetComponentInChildren<Image>().enabled = false;
         return true;
     }
 
@@ -72,7 +74,7 @@ public class Torchlight : MonoBehaviour
             if((Time.time - m_lightOnTime + m_lightOnDuration) > m_lightOnCooldown)
             {
                 //Draw lightning
-                //...
+                m_batteryUI.GetComponentInChildren<Image>().enabled = true;
 
                 return Substate.Ready;
             }
