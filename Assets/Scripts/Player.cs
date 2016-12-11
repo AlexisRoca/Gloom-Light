@@ -19,7 +19,8 @@ public class Player : MonoBehaviour {
         characterController.Move(m_controller.getDisplacement() * Time.deltaTime);
 
         m_interact = m_controller.getInteractInput();
-        m_lightOn = m_controller.getLightInput();
+        if(m_controller.getLightInput())
+            m_lightOn = !m_lightOn;
 
         if(m_lightOn)
             this.GetComponentInChildren<Light>().enabled = true;
@@ -28,13 +29,10 @@ public class Player : MonoBehaviour {
 
         Vector2 aimVector = m_controller.getAngleTorchlight();
 
+
         if (aimVector.x != 0.0f || aimVector.y != 0.0f)
         {
-            float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
-
-
-
-
+            float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg;
             this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
         }
     }
@@ -44,6 +42,18 @@ public class Player : MonoBehaviour {
     {
         m_controller = controller;
         Debug.Log("Creating Player");
+    }
+
+    void OnTriggerEnter(Collider collider)
+    {
+        Debug.Log("collider name : " + collider.gameObject.name);
+
+        if (collider.gameObject.tag == "ConeLight")
+        {
+            //Destroy(this.gameObject);
+            Debug.Log("MOOOOOOOORT _ collider.gameObject.name : " + collider.gameObject.name);
+            Debug.Log("collider.gameObject.tag : " + collider.gameObject.tag);
+        }
     }
 
     public bool getInteract()
