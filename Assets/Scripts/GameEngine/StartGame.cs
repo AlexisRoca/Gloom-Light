@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
 public class StartGame : MonoBehaviour
 {
     public string nextScene;
-    public Light[] m_torchLights;
+    public Text startText;
+
+    private GameObject[] m_torchLights;
     private bool[] m_boolPlayers;
 
 
@@ -13,27 +16,37 @@ public class StartGame : MonoBehaviour
     void Start ()
     {
         m_boolPlayers = new bool[4];
+        m_torchLights = GameObject.FindGameObjectsWithTag("Torch");
+
         for (int i = 0; i<4; i++)
         {
             m_boolPlayers[i] = false;
-            m_torchLights[i].enabled = false;
+            m_torchLights[i].GetComponentInChildren<Light>().enabled = false;
         }
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        bool canStart = false;
+
         // Exit Game Condition
         for (int i = 0; i < 4; i++)
         {
             if(Input.GetButtonDown("InteractButton_p" + (i+1).ToString()))
             {
-                m_torchLights[i].enabled = !m_torchLights[i].enabled;
+                m_torchLights[i].GetComponentInChildren<Light>().enabled = !m_torchLights[i].GetComponentInChildren<Light>().enabled;
+                m_torchLights[i].GetComponent<Animator>().Play("Press");
+
                 m_boolPlayers[i] = !m_boolPlayers[i];
             }
 
             if (Input.GetButtonDown("ExitButton_p" + (i+1).ToString()))
                 startGame();
-        }      
+
+            if (m_boolPlayers[i]) canStart = true;
+        }
+
+        startText.color = (canStart) ? new Color(1.0f, 1.0f, 1.0f, 1.0f) : new Color(1.0f, 1.0f, 1.0f, 0.0f);
     }
 
     void startGame()
