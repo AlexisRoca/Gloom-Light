@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GameEngine : MonoBehaviour
 {
@@ -29,8 +30,21 @@ public class GameEngine : MonoBehaviour
         if(! inPause)
         {
             m_lightManager.update(Time.time);
+
+            int nbSurvivors = 0;
             for (int i = 0; i < m_players.Length; i++)
-                m_players[i].updatePlayer();
+            {
+                if(m_players[i].gameObject != null)
+                {
+                    m_players[i].updatePlayer();
+                    nbSurvivors += 1;
+                }
+            }
+
+            if(nbSurvivors == 1)
+            {
+                endGame();
+            }
   
             PauseCanvas.enabled = false;
     }
@@ -83,5 +97,13 @@ public class GameEngine : MonoBehaviour
 
             activePlayerIndex++;
         }
-    }    
+    }
+
+
+    void endGame()
+    {
+        PersistentData.m_playersStats = m_players;
+
+        SceneManager.LoadScene("Final Scene");
+    }
 }
