@@ -4,7 +4,8 @@ using System.Collections;
 public class Player : MonoBehaviour {
 
     protected CharacterController m_characterController;
-    public Controller m_controller;
+    [HideInInspector] public Controller m_controller;
+
     private bool m_interact;
     private bool m_lightOn = false;
     private Quaternion m_prevLightOrientation;
@@ -29,7 +30,6 @@ public class Player : MonoBehaviour {
         this.GetComponentInChildren<Light>().enabled = false;
     }
 
-
     public void updatePlayer()
     {
         // Increase Time Alife
@@ -46,12 +46,15 @@ public class Player : MonoBehaviour {
         if(aimVector.x != 0.0f || aimVector.y != 0.0f)
         {
             float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
-            this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
+            this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
+
+            m_prevLightOrientation = this.GetComponentInChildren<Light>().transform.rotation;
         }
         else if (displacementVector.x != 0.0f || displacementVector.z != 0.0f)
         {
             float lightAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
             this.GetComponentInChildren<Light>().transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
+
             m_prevLightOrientation = this.GetComponentInChildren<Light>().transform.rotation;
         }
         else
@@ -95,6 +98,11 @@ public class Player : MonoBehaviour {
     public Player(Controller controller)
     {
         m_controller = controller;
+    }
+
+    public void setColor(Material newMaterial)
+    {
+        this.GetComponentInChildren<Light>().GetComponentInChildren<MeshRenderer>().material = newMaterial;
     }
 
     public bool getInteract()
