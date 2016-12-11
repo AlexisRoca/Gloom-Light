@@ -23,11 +23,19 @@ public class Player : MonoBehaviour {
 
     public GameObject m_batteryUI;
 
+    private Light light;
+    private Renderer cone;
+
     // Start & Update functions
     void Start()
     {
         m_characterController = GetComponent<CharacterController>();
-        this.GetComponentInChildren<Light>().enabled = false;
+
+        light = this.GetComponentInChildren<Light>();
+        cone = this.GetComponentInChildren<Light>().GetComponentInChildren<Renderer>();
+
+        light.enabled = false;
+        cone.enabled = false;
     }
 
     public void updatePlayer()
@@ -48,18 +56,18 @@ public class Player : MonoBehaviour {
             float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
             this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
 
-            m_prevLightOrientation = this.GetComponentInChildren<Light>().transform.rotation;
+            m_prevLightOrientation = light.transform.rotation;
         }
         else if (displacementVector.x != 0.0f || displacementVector.z != 0.0f)
         {
             float lightAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
             this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
 
-            m_prevLightOrientation = this.GetComponentInChildren<Light>().transform.rotation;
+            m_prevLightOrientation = light.transform.rotation;
         }
         else
         {
-            this.GetComponentInChildren<Light>().transform.rotation = m_prevLightOrientation;
+            light.transform.rotation = m_prevLightOrientation;
         }
 
         // Get interact input
@@ -70,7 +78,8 @@ public class Player : MonoBehaviour {
         {
             if (!m_lightOn && ((Time.time - m_lightOnTime + m_lightOnDuration) > m_lightOnCooldown))
             {
-                this.GetComponentInChildren<Light>().enabled = true;
+                light.enabled = true;
+                cone.enabled = true;
                 m_lightOn = true;
                 m_lightOnTime = Time.time;
 
@@ -84,7 +93,8 @@ public class Player : MonoBehaviour {
         }
         else if (m_lightOn && ((Time.time - m_lightOnTime) > m_lightOnDuration))
         {
-            this.GetComponentInChildren<Light>().enabled = false;
+            light.enabled = false;
+            cone.enabled = false;
             m_lightOn = false;
         }
 
