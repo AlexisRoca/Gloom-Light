@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class DisplayPlayersStats : MonoBehaviour {
+
+    public Text winnerText;
 
     public Text killText;
     public Text alifeText;
@@ -30,11 +33,25 @@ public class DisplayPlayersStats : MonoBehaviour {
 
         getStats();
 
+        winnerText.text = "Player " + alife.id + " Win !";
+
         killText.text = "Player " + kill.id + " with " + (int)kill.max + " kill";
         alifeText.text = "Player " + alife.id + " with " + (int)alife.max + " seconds survive";
         interractionText.text = "Player " + interraction.id + " with " + (int)interraction.max + " interractions";
         lightOnText.text = "Player " + lightOn.id + " with " + (int)lightOn.max + " torch turns on";
         uselessPressText.text = "Player " + uselessPress.id + " with " + (int)uselessPress.max + " useless press";
+    }
+
+    void Update()
+    {
+        for (int i = 0; i < m_player.Length; i++)
+        {
+            if (Input.GetButtonDown("InteractButton_p" + (i + 1).ToString()))
+                SceneManager.LoadScene("Start Scene");
+
+            if (Input.GetButtonDown("ExitButton_p" + (i + 1).ToString()))
+                Application.Quit();
+        }
     }
 
     void getStats()
