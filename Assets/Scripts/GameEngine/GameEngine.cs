@@ -4,8 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class GameEngine : MonoBehaviour
 {
-    private AbstractObjects [] m_roomsObjects;
-    private Player [] m_players;
+    private AbstractObjects[] m_roomsObjects;
+    private Player[] m_players;
     private LightManager m_lightManager;
 
     public Canvas PauseCanvas;
@@ -13,6 +13,11 @@ public class GameEngine : MonoBehaviour
     public Player m_prefabPlayer;
 
     public bool inPause = false;
+
+    public Material m_material1;
+    public Material m_material2;
+    public Material m_material3;
+    public Material m_material4;
 
     public void Start()
     {
@@ -94,6 +99,24 @@ public class GameEngine : MonoBehaviour
             Pad pad = new Pad();
             pad.joystickNumber = i + 1;
             player.m_controller = pad;
+
+            switch(i)
+            {
+                case 0:
+                    player.setColor(m_material1);
+                    break;
+                case 1:
+                    player.setColor(m_material2);
+                    break;
+                case 2:
+                    player.setColor(m_material3);
+                    break;
+                case 3:
+                    player.setColor(m_material4);
+                    break;
+                default:
+                    break;
+            }
 
             activePlayerIndex++;
         }

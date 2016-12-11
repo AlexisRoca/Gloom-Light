@@ -4,7 +4,8 @@ using System.Collections;
 public class Player : MonoBehaviour {
 
     protected CharacterController m_characterController;
-    public Controller m_controller;
+    [HideInInspector] public Controller m_controller;
+
     private bool m_interact;
     private bool m_lightOn = false;
     private Quaternion m_prevLightOrientation;
@@ -19,7 +20,6 @@ public class Player : MonoBehaviour {
         m_characterController = GetComponent<CharacterController>();
         this.GetComponentInChildren<Light>().enabled = false;
     }
-
 
     public void updatePlayer()
     {
@@ -39,6 +39,8 @@ public class Player : MonoBehaviour {
         {
             float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
             this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
+
+            m_prevLightOrientation = this.GetComponentInChildren<Light>().transform.rotation;
         }
         else if(displacementVector.x != 0.0f || displacementVector.z != 0.0f)
         {
@@ -83,6 +85,11 @@ public class Player : MonoBehaviour {
     public Player(Controller controller)
     {
         m_controller = controller;
+    }
+
+    public void setColor(Material newMaterial)
+    {
+        this.GetComponentInChildren<Light>().GetComponentInChildren<MeshRenderer>().material = newMaterial;
     }
 
     public bool getInteract()
