@@ -5,6 +5,7 @@ public class Player : MonoBehaviour {
 
     protected CharacterController characterController;
     public Controller m_controller;
+    public Animator m_batteryChargingAnimator;
     private bool m_interact;
     private bool m_lightOn = false;
 
