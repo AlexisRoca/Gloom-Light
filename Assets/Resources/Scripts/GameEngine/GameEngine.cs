@@ -4,17 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class GameEngine : MonoBehaviour
 {
-    public Player m_prefabPlayer;
-    public Canvas PauseCanvas;
-    public bool debug;
-
-    private AbstractObject[] m_roomsObjects;
-    private Torchlight[] m_torchesPlayer;
-    private Player[] m_players;
-    private LightManager m_lightManager;
-    private bool inPause = false;
-    private int m_nbSurvivors = 0;
-
     enum Substate
     {
         WaitForStart,
@@ -22,6 +11,16 @@ public class GameEngine : MonoBehaviour
         WaitForEnd,
         Pause
     };
+
+    public Player m_prefabPlayer;
+    public Canvas PauseCanvas;
+    public bool debug;
+
+    private AbstractObject[] m_roomsObjects;
+    private Player[] m_players;
+    private GameObject[] m_deadSpotLight;
+    private LightManager m_lightManager;
+    private int m_nbSurvivors = 0;
 
     private Substate m_substate;
 
@@ -41,6 +40,8 @@ public class GameEngine : MonoBehaviour
 
         m_substate = Substate.WaitForStart;
         m_sceneOnTime = Time.time;
+
+        m_nbSurvivors = m_players.Length;
     }
 
     // Update is called once per frame
@@ -50,16 +51,20 @@ public class GameEngine : MonoBehaviour
         executeSubstate();
     }
 
-    void playerIsDead(Vector3 pos, Material colorMat)
+    void playerIsDead(Transform transform, Material colorMat)
     {
         // Instanciate new SpotLight
-        GameObject spotLightObj = new GameObject();
-        spotLightObj.transform.position = new Vector3(pos[0], 5.0f, pos[2]);
-        Light spotLight = spotLightObj.AddComponent<Light>();
-        spotLight.type = LightType.Spot;
-        spotLight.spotAngle = 50.0f;
-        spotLight.intensity = 8.0f;
-        spotLight.color = colorMat.color;
+        m_deadSpotLight[m_players.Length - m_nbSurvivors] = new GameObject();
+        GameObject spotLightObj = m_deadSpotLight[m_players.Length - m_nbSurvivors];
+
+        Instantiate(spotLightObj);
+        spotLightObj.transform.position = new Vector3(transform.position[0], 5.0f, transform.position[2]);
+        spotLightObj.transform.eulerAngles = new Vector3(90.0f, 0.0f, 0.0f);
+        Light pointLight = spotLightObj.AddComponent<Light>();
+        pointLight.type = LightType.Point;
+        pointLight.range = 15.0f;
+        pointLight.intensity = 6.0f;
+        pointLight.color = colorMat.color;
     }
 
     void loadScene()
@@ -73,6 +78,8 @@ public class GameEngine : MonoBehaviour
         if(debug)
         {
             m_players = new Player[2];
+            m_deadSpotLight = new GameObject[1];
+
             for(int i = 0; i < 2; i++)
             {
                 Player player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
@@ -99,6 +106,7 @@ public class GameEngine : MonoBehaviour
         {
             int gamepadNb = PersistentData.m_nbActivePlayer;
             m_players = new Player[gamepadNb];
+            m_deadSpotLight = new GameObject[gamepadNb-1];
 
             int activePlayerIndex = 0;
 
@@ -193,40 +201,27 @@ public class GameEngine : MonoBehaviour
         {
             case Substate.WaitForStart:
                 m_lightManager.update(Time.time);
-                int nbSurvivors = 0;
                 for(int i = 0; i < m_players.Length; i++)
-                {
                     if(m_players[i] != null)
-                    {
-                        if(m_players[i].m_readyForDead)
-                        {
-                            playerIsDead(m_players[i].transform.position, m_players[i].m_colorMat);
-                            Destroy(m_players[i].gameObject); // TO DO
-                        }
-
                         m_players[i].updatePlayer();
-                        nbSurvivors += 1;
-                    }
-                }
                 break;
 
             case Substate.Game:
                 m_lightManager.update(Time.time);
-                m_nbSurvivors = 0;
                 for(int i = 0; i < m_players.Length; i++)
                 {
                     if(m_players[i] != null)
                     {
                         if(m_players[i].m_readyForDead)
                         {
-                            playerIsDead(m_players[i].transform.position, m_players[i].m_colorMat);
+                            playerIsDead(m_players[i].transform, m_players[i].m_colorMat);
                             Destroy(m_players[i].gameObject); // TO DO
+                            m_nbSurvivors--;
 
                             continue;
                         }
 
                         m_players[i].updatePlayer();
-                        m_nbSurvivors += 1;
                     }
                 }
                 break;
@@ -234,21 +229,9 @@ public class GameEngine : MonoBehaviour
             case Substate.WaitForEnd:
                 m_lightManager.update(Time.time);
 
-                m_nbSurvivors = 0;
                 for(int i = 0; i < m_players.Length; i++)
-                {
                     if(m_players[i] != null)
-                    {
-                        if(m_players[i].m_readyForDead)
-                        {
-                            playerIsDead(m_players[i].transform.position, m_players[i].m_colorMat);
-                            Destroy(m_players[i].gameObject); // TO DO
-                        }
-
                         m_players[i].updatePlayer();
-                        m_nbSurvivors += 1;
-                    }
-                }
                 break;
 
             case Substate.Pause:
