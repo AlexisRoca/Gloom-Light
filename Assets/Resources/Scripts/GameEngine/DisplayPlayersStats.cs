@@ -35,23 +35,23 @@ public class DisplayPlayersStats : MonoBehaviour {
         getStats();
 
 
-        winnerText.text = "Player " + alife.id + " Win !";
-        winnerText.material = alife.mat;
+        winnerText.text = "Winner !";
+        winnerText.color = alife.mat.color;
 
-        killText.text = "Player " + kill.id + " with " + (int)kill.max + " kill";
-        killText.material = kill.mat;
+        killText.text = "With " + (int)kill.max + " kill";
+        killText.color = kill.mat.color;
 
-        alifeText.text = "Player " + alife.id + " with " + (int)alife.max + " seconds survive";
-        alifeText.material = alife.mat;
+        alifeText.text = "With " + (int)alife.max + " seconds survive";
+        alifeText.color = alife.mat.color;
 
-        interractionText.text = "Player " + interraction.id + " with " + (int)interraction.max + " interractions";
-        interractionText.material = interraction.mat;
+        interractionText.text = "With " + (int)interraction.max + " interractions";
+        interractionText.color = interraction.mat.color;
 
-        lightOnText.text = "Player " + lightOn.id + " with " + (int)lightOn.max + " torch turns on";
-        lightOnText.material = lightOn.mat;
+        lightOnText.text = "With " + (int)lightOn.max + " torch turns on";
+        lightOnText.color = lightOn.mat.color;
 
-        uselessPressText.text = "Player " + uselessPress.id + " with " + (int)uselessPress.max + " useless press";
-        uselessPressText.material = uselessPress.mat;
+        uselessPressText.text = "With " + (int)uselessPress.max + " useless press";
+        uselessPressText.color = uselessPress.mat.color;
 
     }
 
