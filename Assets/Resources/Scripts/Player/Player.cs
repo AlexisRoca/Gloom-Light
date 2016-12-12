@@ -16,6 +16,8 @@ public class Player : MonoBehaviour {
     public int m_nbKill = 0;
     public float m_timeAlife = 0.0f;
 
+    public GameObject m_torchlight;
+    public AudioSource m_torchSound;
     private Quaternion m_prevLightOrientation;
     protected CharacterController m_characterController;
 
@@ -67,14 +69,16 @@ public class Player : MonoBehaviour {
         // Get interact input
         if(m_enableInteractions)
         {
-            if(m_controller.getLightInput())
-            {
+        if(m_controller.getLightInput())
+        {
                 if(!m_torchlight.GetComponent<Torchlight>().setOn())
-                    m_nbPressUseless += 1;
-                else
-                    m_torchlight.GetComponent<Light>().enabled = true;
-            }
+                m_nbPressUseless += 1;
+            else
+            {
+                m_torchSound.Play();
+                m_torchlight.GetComponent<Light>().enabled = true;
         }
+    }
     }
 
     public void updatePlayerWithoutLight()

@@ -39,6 +39,8 @@ public class LightManager
     {
         m_startStateTime = gameTime;
         m_substate = Substate.Start;
+
+        LightningSound = GameObject.Find("FlashLights").GetComponentInChildren<AudioSource>();
     }
 
     public void initLights()
@@ -57,11 +59,6 @@ public class LightManager
 
         for(int i = 0; i < windowsLightsGO.Length; i++)
             m_windowsLights.SetValue(windowsLightsGO[i].GetComponent<Light>(),i);
-
-        // SoundLightning init
-        GameObject spotlight = GameObject.Find("Spotlight1");
-        LightningSound = spotlight.GetComponentInChildren<AudioSource>();
-        LightningSound.Stop();
     }
 
     public void update(float gameTime)
