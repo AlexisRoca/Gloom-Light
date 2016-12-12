@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-abstract public class Controller {
+abstract public class Controller : MonoBehaviour {
 
     protected Vector3 movementVector;
     protected Vector2 aimVector;
