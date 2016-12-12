@@ -31,16 +31,16 @@ public class GameEngine : MonoBehaviour
 
     public void Start()
     {
-        loadScene();
         m_lightManager = new LightManager(Time.time);
         m_lightManager.initLights();
-        initPlayers();
-        m_sceneOnTime = Time.time;
 
-        enableTorches(false);
-        enableInteractibleObjects(false);
+        initPlayers();
+        loadScene();
+
+        enablePlayerInteractions(false);
 
         m_substate = Substate.WaitForStart;
+        m_sceneOnTime = Time.time;
     }
 
     // Update is called once per frame
@@ -65,8 +65,7 @@ public class GameEngine : MonoBehaviour
     void loadScene()
     {
         // Get all elements from the scene
-        m_roomsObjects = GameObject.FindObjectsOfType(typeof (AbstractObject)) as AbstractObject[];
-        m_torchesPlayer = GameObject.FindObjectsOfType(typeof(Torchlight)) as Torchlight[];
+        m_roomsObjects = GameObject.FindObjectsOfType(typeof(AbstractObject)) as AbstractObject[];
     }
 
     void initPlayers()
@@ -74,13 +73,13 @@ public class GameEngine : MonoBehaviour
         if(debug)
         {
             m_players = new Player[2];
-            for (int i = 0; i < 2; i++)
+            for(int i = 0; i < 2; i++)
             {
                 Player player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
                 player.transform.position = new Vector3(0.0f, 0.5f, 2.0f * i);
 
-                GameObject go = GameObject.Find("GUI_Player" + (i+1).ToString());
-                for (int j = 0; j < go.transform.childCount; j++)
+                GameObject go = GameObject.Find("GUI_Player" + (i + 1).ToString());
+                for(int j = 0; j < go.transform.childCount; j++)
                     if(go.transform.GetChild(j).transform.name == "Battery")
                         player.m_torchlight.GetComponent<Torchlight>().m_batteryUI = go.transform.GetChild(j).gameObject;
 
@@ -88,8 +87,9 @@ public class GameEngine : MonoBehaviour
                 Pad pad = new Pad();
                 pad.joystickNumber = i + 1;
                 player.m_controller = pad;
+                player.m_enableInteractions = false;
 
-                player.setColor((Material) Resources.Load("Materials/Player/Player" + (i+1).ToString()));
+                player.setColor((Material)Resources.Load("Materials/Player/Player" + (i + 1).ToString()));
 
                 m_players[i] = player;
             }
@@ -100,20 +100,20 @@ public class GameEngine : MonoBehaviour
             int gamepadNb = PersistentData.m_nbActivePlayer;
             m_players = new Player[gamepadNb];
 
-            int activePlayerIndex = 0; 
+            int activePlayerIndex = 0;
 
-            for (int i = 0; i < 4; i++)
+            for(int i = 0; i < 4; i++)
             {
                 bool activePlayer = PersistentData.m_activePlayers[i];
 
-                if (!activePlayer)
+                if(!activePlayer)
                     continue;
 
                 Player player = Instantiate(m_prefabPlayer) as Player;
-                player.transform.position = new Vector3(0.0f, 0.5f, 2.0f*i);
+                player.transform.position = new Vector3(0.0f, 0.5f, 2.0f * i);
 
-                GameObject go = GameObject.Find("GUI_Player" + (i+1).ToString());
-                for(int j=0; j < go.transform.childCount; j++)
+                GameObject go = GameObject.Find("GUI_Player" + (i + 1).ToString());
+                for(int j = 0; j < go.transform.childCount; j++)
                     if(go.transform.GetChild(j).transform.name == "Battery")
                         player.m_torchlight.GetComponent<Torchlight>().m_batteryUI = go.transform.GetChild(j).gameObject;
 
@@ -121,8 +121,9 @@ public class GameEngine : MonoBehaviour
                 Pad pad = new Pad();
                 pad.joystickNumber = i + 1;
                 player.m_controller = pad;
-            
-                player.setColor((Material) Resources.Load("Materials/Player/Player" + (i+1).ToString()));
+
+                player.setColor((Material)Resources.Load("Materials/Player/Player" + (i + 1).ToString()));
+                player.m_enableInteractions = false;
 
                 m_players[activePlayerIndex] = player;
                 activePlayerIndex++;
@@ -130,16 +131,10 @@ public class GameEngine : MonoBehaviour
         }
     }
 
-    void enableTorches(bool enabled)
+    void enablePlayerInteractions(bool enabled)
     {
-        for (int i = 0; i < m_torchesPlayer.Length; i++)
-            m_torchesPlayer[i].enabled = enabled;
-    }
-
-    void enableInteractibleObjects(bool enabled)
-    {
-        for (int i = 0; i < m_roomsObjects.Length; i++)
-            m_roomsObjects[i].GetComponentInChildren<Collider>().enabled = enabled;
+        for(int i = 0; i < m_players.Length; i++)
+            m_players[i].m_enableInteractions = enabled;
     }
 
     void endGame()
@@ -150,35 +145,41 @@ public class GameEngine : MonoBehaviour
 
     Substate checkChangeSubstate()
     {
-        switch (m_substate)
+        switch(m_substate)
         {
             case Substate.WaitForStart:
-                if ((Time.time - m_sceneOnTime) > m_waitForStartDuration)
+                if((Time.time - m_sceneOnTime) > m_waitForStartDuration)
                 {
-                    enableTorches(true);
-                    enableInteractibleObjects(true);
+                    enablePlayerInteractions(true);
                     return Substate.Game;
                 }
                 break;
 
             case Substate.Game:
-                if (!debug)
-                    if (m_nbSurvivors == 1)
+                if(!debug)
+                    if(m_nbSurvivors == 1)
                         return Substate.WaitForEnd;
-                if (Input.GetButtonDown("Start"))
+
+                if(Input.GetButtonDown("Start"))
+                {
+                    PauseCanvas.enabled = true;
                     return Substate.Pause;
+                }
                 break;
 
             case Substate.WaitForEnd:
-                if ((Time.time - m_sceneOnTime) > m_waitForEndDuration)
+                if((Time.time - m_sceneOnTime) > m_waitForEndDuration)
                     endGame();
                 break;
 
             case Substate.Pause:
-                if (Input.GetButtonDown("Start"))
+                if(Input.GetButtonDown("Start"))
+                {
+                    PauseCanvas.enabled = false;
                     return Substate.Game;
+                }
 
-                if (Input.GetButtonDown("Exit"))
+                if(Input.GetButtonDown("Exit"))
                     Application.Quit();
                 break;
         }
@@ -188,16 +189,16 @@ public class GameEngine : MonoBehaviour
 
     void executeSubstate()
     {
-        switch (m_substate)
+        switch(m_substate)
         {
             case Substate.WaitForStart:
                 m_lightManager.update(Time.time);
                 int nbSurvivors = 0;
-                for (int i = 0; i < m_players.Length; i++)
+                for(int i = 0; i < m_players.Length; i++)
                 {
-                    if (m_players[i] != null)
+                    if(m_players[i] != null)
                     {
-                        if (m_players[i].m_readyForDead)
+                        if(m_players[i].m_readyForDead)
                         {
                             playerIsDead(m_players[i].transform.position, m_players[i].m_colorMat);
                             Destroy(m_players[i].gameObject); // TO DO
@@ -212,11 +213,11 @@ public class GameEngine : MonoBehaviour
             case Substate.Game:
                 m_lightManager.update(Time.time);
                 m_nbSurvivors = 0;
-                for (int i = 0; i < m_players.Length; i++)
+                for(int i = 0; i < m_players.Length; i++)
                 {
-                    if (m_players[i] != null)
+                    if(m_players[i] != null)
                     {
-                        if (m_players[i].m_readyForDead)
+                        if(m_players[i].m_readyForDead)
                         {
                             playerIsDead(m_players[i].transform.position, m_players[i].m_colorMat);
                             Destroy(m_players[i].gameObject); // TO DO
@@ -234,11 +235,11 @@ public class GameEngine : MonoBehaviour
                 m_lightManager.update(Time.time);
 
                 m_nbSurvivors = 0;
-                for (int i = 0; i < m_players.Length; i++)
+                for(int i = 0; i < m_players.Length; i++)
                 {
-                    if (m_players[i] != null)
+                    if(m_players[i] != null)
                     {
-                        if (m_players[i].m_readyForDead)
+                        if(m_players[i].m_readyForDead)
                         {
                             playerIsDead(m_players[i].transform.position, m_players[i].m_colorMat);
                             Destroy(m_players[i].gameObject); // TO DO
@@ -251,7 +252,6 @@ public class GameEngine : MonoBehaviour
                 break;
 
             case Substate.Pause:
-                PauseCanvas.enabled = !PauseCanvas.enabled;
                 break;
         }
     }
