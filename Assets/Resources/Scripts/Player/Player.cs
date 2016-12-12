@@ -17,7 +17,6 @@ public class Player : MonoBehaviour {
     public int m_nbKill = 0;
     public float m_timeAlife = 0.0f;
 
-    //public GameObject m_torchlight;
     public AudioSource m_torchSound;
     public Animator m_animator;
     private Quaternion m_prevLightOrientation;
@@ -49,7 +48,7 @@ public class Player : MonoBehaviour {
         m_characterController.Move(displacementVector * Time.deltaTime);
 
         // Aim
-        if(aimVector.x != 0.0f || aimVector.y != 0.0f)
+        if (aimVector.x != 0.0f || aimVector.y != 0.0f)
         {
             float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
             this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
@@ -69,9 +68,9 @@ public class Player : MonoBehaviour {
         }
 
         // Get interact input
-        if(m_enableInteractions)
+        if (m_enableInteractions)
         {
-            if(m_controller.getLightInput())
+            if (m_controller.getLightInput())
             {
                 if (!m_torchlight.GetComponent<Torchlight>().setOn())
                     m_nbPressUseless += 1;
@@ -83,7 +82,12 @@ public class Player : MonoBehaviour {
             }
         }
     }
+    
 
+    public void updatePlayerWithoutLight()
+    {
+        // Increase Time Alife
+        m_timeAlife += Time.deltaTime;
 
     void OnTriggerStay(Collider collider)
     {
