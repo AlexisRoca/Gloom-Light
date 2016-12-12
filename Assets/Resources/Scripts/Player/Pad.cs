@@ -35,14 +35,6 @@ public class Pad : Controller
     public override bool getLightInput()
     {
         joystickString = joystickNumber.ToString();
-
         return (Input.GetAxis("LightButton_p" + joystickString) != 0);
-    }
-
-    public override bool getExitInput()
-    {
-        joystickString = joystickNumber.ToString();
-
-        return Input.GetButtonDown("ExitButton_p" + joystickString);
     }
 }

@@ -9,6 +9,7 @@ public class GameEngine : MonoBehaviour
     public bool debug;
 
     private AbstractObjects[] m_roomsObjects;
+    private Torchlight[] m_torchesPlayer;
     private Player[] m_players;
     private LightManager m_lightManager;
     private bool inPause = false;
@@ -18,20 +19,15 @@ public class GameEngine : MonoBehaviour
     {
         WaitForStart,
         Game,
-        Pause,
         WaitForEnd,
-        End,
-        Quit
+        Pause
     };
 
     private Substate m_substate;
 
     public float m_waitForStartDuration = 5.0f;
-    public float m_lightCooldown = 3.0f;
-    public float m_lightOnDuration = 1.0f;
-    private float m_sceneOnTime;
     public float m_waitForEndDuration = 5.0f;
-
+    private float m_sceneOnTime;
 
     public void Start()
     {
@@ -41,6 +37,9 @@ public class GameEngine : MonoBehaviour
         initPlayers();
         m_sceneOnTime = Time.time;
 
+        enableTorches(false);
+        enableInteractibleObjects(false);
+
         m_substate = Substate.WaitForStart;
     }
 
@@ -49,6 +48,9 @@ public class GameEngine : MonoBehaviour
     {
         m_substate = checkChangeSubstate();
         executeSubstate();
+
+        Debug.Log(m_substate);
+        Debug.Log(m_roomsObjects);
     }
 
     void playerIsDead(Vector3 pos, Material colorMat)
@@ -67,6 +69,7 @@ public class GameEngine : MonoBehaviour
     {
         // Get all elements from the scene
         m_roomsObjects = GameObject.FindObjectsOfType<AbstractObjects>();
+        m_torchesPlayer = GameObject.FindObjectsOfType<Torchlight>();
     }
 
     void initPlayers()
@@ -130,6 +133,18 @@ public class GameEngine : MonoBehaviour
         }
     }
 
+    void enableTorches(bool enabled)
+    {
+        for (int i = 0; i < m_torchesPlayer.Length; i++)
+            m_torchesPlayer[i].enabled = enabled;
+    }
+
+    void enableInteractibleObjects(bool enabled)
+    {
+        for (int i = 0; i < m_roomsObjects.Length; i++)
+            m_roomsObjects[i].GetComponentInChildren<Collider>().enabled = enabled;
+    }
+
     void endGame()
     {
         PersistentData.m_playersStats = m_players;
@@ -142,7 +157,11 @@ public class GameEngine : MonoBehaviour
         {
             case Substate.WaitForStart:
                 if ((Time.time - m_sceneOnTime) > m_waitForStartDuration)
+                {
+                    enableTorches(true);
+                    enableInteractibleObjects(true);
                     return Substate.Game;
+                }
                 break;
 
             case Substate.Game:
@@ -161,9 +180,9 @@ public class GameEngine : MonoBehaviour
             case Substate.Pause:
                 if (Input.GetButtonDown("Start"))
                     return Substate.Game;
-                for (int i = 0; i < m_players.Length; i++)
-                    if (m_players[i].m_controller.getExitInput())
-                        Application.Quit();
+
+                if (Input.GetButtonDown("Exit"))
+                    Application.Quit();
                 break;
         }
 
@@ -194,7 +213,6 @@ public class GameEngine : MonoBehaviour
                 break;
 
             case Substate.Game:
-
                 m_lightManager.update(Time.time);
                 m_nbSurvivors = 0;
                 for (int i = 0; i < m_players.Length; i++)
