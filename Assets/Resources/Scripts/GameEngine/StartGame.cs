@@ -11,30 +11,25 @@ public class StartGame : MonoBehaviour
     private GameObject[] m_torchLights;
     private bool[] m_boolPlayers;
 
+    private int m_nbActivePlayer;
 
     // Use this for initialization
     void Start ()
     {
         m_boolPlayers = new bool[4];
-
         m_torchLights = new GameObject[4];
-        m_torchLights[0] = GameObject.Find("Torch_1");
-        m_torchLights[1] = GameObject.Find("Torch_2");
-        m_torchLights[2] = GameObject.Find("Torch_3");
-        m_torchLights[3] = GameObject.Find("Torch_4");
-        
+
         for (int i = 0; i<4; i++)
         {
             m_boolPlayers[i] = false;
+            m_torchLights[i] = GameObject.Find("Torch_" + (i+1).ToString());
             m_torchLights[i].GetComponentInChildren<Light>().enabled = false;
         }
 	}
 	
 	// Update is called once per frame
-	void Update () {
-        bool canStart = false;
-
-        // Exit Game Condition
+	void Update ()
+    {
         for (int i = 0; i < 4; i++)
         {
             if(Input.GetButtonDown("InteractButton_p" + (i+1).ToString()))
@@ -43,29 +38,36 @@ public class StartGame : MonoBehaviour
                 m_torchLights[i].GetComponent<Animator>().Play("Press");
 
                 m_boolPlayers[i] = !m_boolPlayers[i];
+
+                if(m_boolPlayers[i])
+                    m_nbActivePlayer++;
+                else
+                    m_nbActivePlayer--;
             }
-
-            if (Input.GetButtonDown("ExitButton_p" + (i+1).ToString()))
-                startGame();
-
-            if (m_boolPlayers[i]) canStart = true;
         }
 
-        startText.color = (canStart) ? new Color(1.0f, 1.0f, 1.0f, 1.0f) : new Color(1.0f, 1.0f, 1.0f, 0.0f);
+        if(m_nbActivePlayer > 1)
+        {
+            if(startText.color != new Color(1.0f,1.0f,1.0f,1.0f))
+                startText.color = new Color(1.0f,1.0f,1.0f,1.0f);
+
+            if(Input.GetButtonDown("Start"))
+                startGame();
+        }
+
+        else
+        {
+            if(startText.color != new Color(1.0f,1.0f,1.0f,0.0f))
+                startText.color = new Color(1.0f,1.0f,1.0f,0.0f);
+        }
     }
 
     void startGame()
     {
+        PersistentData.m_nbActivePlayer = m_nbActivePlayer;
+
         PersistentData.m_activePlayers = new bool[4];
-        PersistentData.m_nbActivePlayer = 0;
-
-        for (int i = 0; i < m_boolPlayers.Length; i++)
-        {
-            PersistentData.m_activePlayers[i] = m_boolPlayers[i];
-
-            if(m_boolPlayers[i])
-                PersistentData.m_nbActivePlayer++;
-        }
+        m_boolPlayers.CopyTo(PersistentData.m_activePlayers,0);
 
         SceneManager.LoadScene(nextScene);
     }
