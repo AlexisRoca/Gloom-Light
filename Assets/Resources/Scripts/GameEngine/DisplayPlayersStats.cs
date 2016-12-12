@@ -17,6 +17,7 @@ public class DisplayPlayersStats : MonoBehaviour {
     {
         public float max;
         public int id;
+        public Material mat;
     }
 
     Score kill;
@@ -33,13 +34,25 @@ public class DisplayPlayersStats : MonoBehaviour {
 
         getStats();
 
-        winnerText.text = "Player " + alife.id + " Win !";
 
-        killText.text = "Player " + kill.id + " with " + (int)kill.max + " kill";
-        alifeText.text = "Player " + alife.id + " with " + (int)alife.max + " seconds survive";
-        interractionText.text = "Player " + interraction.id + " with " + (int)interraction.max + " interractions";
-        lightOnText.text = "Player " + lightOn.id + " with " + (int)lightOn.max + " torch turns on";
-        uselessPressText.text = "Player " + uselessPress.id + " with " + (int)uselessPress.max + " useless press";
+        winnerText.text = "Winner !";
+        winnerText.color = alife.mat.color;
+
+        killText.text = "With " + (int)kill.max + " kill";
+        killText.color = kill.mat.color;
+
+        alifeText.text = "With " + (int)alife.max + " seconds survive";
+        alifeText.color = alife.mat.color;
+
+        interractionText.text = "With " + (int)interraction.max + " interractions";
+        interractionText.color = interraction.mat.color;
+
+        lightOnText.text = "With " + (int)lightOn.max + " torch turns on";
+        lightOnText.color = lightOn.mat.color;
+
+        uselessPressText.text = "With " + (int)uselessPress.max + " useless press";
+        uselessPressText.color = uselessPress.mat.color;
+
     }
 
     void Update()
@@ -73,30 +86,35 @@ public class DisplayPlayersStats : MonoBehaviour {
             {
                 kill.max = m_player[i].m_nbKill;
                 kill.id = i;
+                kill.mat = m_player[i].m_colorMat;
             }
 
             if (m_player[i].m_timeAlife > alife.max)
             {
                 alife.max = m_player[i].m_timeAlife;
                 alife.id = i;
+                alife.mat = m_player[i].m_colorMat;
             }
 
             if (m_player[i].m_nbInterraction > interraction.max)
             {
                 interraction.max = m_player[i].m_nbInterraction;
                 interraction.id = i;
+                interraction.mat = m_player[i].m_colorMat;
             }
 
             if (m_player[i].m_nbOnLight > lightOn.max)
             {
                 lightOn.max = m_player[i].m_nbOnLight;
                 lightOn.id = i;
+                lightOn.mat = m_player[i].m_colorMat;
             }
 
             if (m_player[i].m_nbPressUseless > uselessPress.max)
             {
                 uselessPress.max = m_player[i].m_nbPressUseless;
                 uselessPress.id = i;
+                uselessPress.mat = m_player[i].m_colorMat;
             }
         }
     }
