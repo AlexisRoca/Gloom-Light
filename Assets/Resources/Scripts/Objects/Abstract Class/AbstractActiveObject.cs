@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-abstract public class AbstractActiveObject : AbstractObjects {
+abstract public class AbstractActiveObject : AbstractObject {
 
     // Event calls when in trigger and interact
     void OnTriggerStay(Collider collider) {

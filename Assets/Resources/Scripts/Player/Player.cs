@@ -6,9 +6,10 @@ public class Player : MonoBehaviour {
     protected CharacterController m_characterController;
     [HideInInspector] public Controller m_controller;
 
+    private Quaternion m_prevLightOrientation;
     private bool m_interact;
     public bool m_readyForDead = false;
-    private Quaternion m_prevLightOrientation;
+    public Material m_colorMat;
 
     public int m_nbOnLight = 0;
     public int m_nbPressUseless = 0;
@@ -106,7 +107,8 @@ public class Player : MonoBehaviour {
 
     public void setColor(Material newMaterial)
     {
-        this.GetComponentInChildren<Light>().GetComponentInChildren<MeshRenderer>().material = newMaterial;
+        m_colorMat = newMaterial;
+        this.GetComponentInChildren<Light>().GetComponentInChildren<MeshRenderer>().material = m_colorMat;
     }
 
     public bool getInteract()

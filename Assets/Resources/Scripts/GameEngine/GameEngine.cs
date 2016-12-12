@@ -8,67 +8,65 @@ public class GameEngine : MonoBehaviour
     public Canvas PauseCanvas;
     public bool debug;
 
-    private AbstractObjects[] m_roomsObjects;
+    private AbstractObject[] m_roomsObjects;
+    private Torchlight[] m_torchesPlayer;
     private Player[] m_players;
     private LightManager m_lightManager;
     private bool inPause = false;
+    private int m_nbSurvivors = 0;
+
+    enum Substate
+    {
+        WaitForStart,
+        Game,
+        WaitForEnd,
+        Pause
+    };
+
+    private Substate m_substate;
+
+    public float m_waitForStartDuration = 5.0f;
+    public float m_waitForEndDuration = 5.0f;
+    private float m_sceneOnTime;
 
     public void Start()
     {
         loadScene();
-
         m_lightManager = new LightManager(Time.time);
         m_lightManager.initLights();
-
         initPlayers();
+        m_sceneOnTime = Time.time;
+
+        enableTorches(false);
+        enableInteractibleObjects(false);
+
+        m_substate = Substate.WaitForStart;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetButtonDown("Start"))
-        {
-            inPause = !inPause;
-            PauseCanvas.enabled = !PauseCanvas.enabled;
-        }
+        m_substate = checkChangeSubstate();
+        executeSubstate();
+    }
 
-
-        if(!inPause)
-        {
-            m_lightManager.update(Time.time);
-
-            int nbSurvivors = 0;
-            for(int i = 0; i < m_players.Length; i++)
-            {
-                if (m_players[i] != null)
-                {
-                    if(m_players[i].m_readyForDead)
-                        Destroy(m_players[i].gameObject);
-
-                    m_players[i].updatePlayer();
-                    nbSurvivors += 1;
-                }
-            }
-            
-            if(!debug)
-                if(nbSurvivors == 1)
-                    endGame();
-        }
-        else
-        {
-            // Exit Game Condition
-            for(int i = 0; i < m_players.Length; i++)
-            {
-                if (m_players[i].m_controller.getExitInput())
-                    Application.Quit();
-            }
-        }
+    void playerIsDead(Vector3 pos, Material colorMat)
+    {
+        // Instanciate new SpotLight
+        GameObject spotLightObj = new GameObject();
+        spotLightObj.transform.position = new Vector3(pos[0], 5.0f, pos[2]);
+        Light spotLight = spotLightObj.AddComponent<Light>();
+        spotLight.type = LightType.Spot;
+        spotLight.spotAngle = 50.0f;
+        spotLight.intensity = 8.0f;
+        spotLight.color = colorMat.color;
     }
 
     void loadScene()
     {
         // Get all elements from the scene
-        m_roomsObjects = GameObject.FindObjectsOfType<AbstractObjects>();
+        m_roomsObjects = GameObject.FindObjectsOfType(typeof (AbstractObject)) as AbstractObject[];
+        m_torchesPlayer = GameObject.FindObjectsOfType(typeof(Torchlight)) as Torchlight[];
     }
 
     void initPlayers()
@@ -132,10 +130,129 @@ public class GameEngine : MonoBehaviour
         }
     }
 
+    void enableTorches(bool enabled)
+    {
+        for (int i = 0; i < m_torchesPlayer.Length; i++)
+            m_torchesPlayer[i].enabled = enabled;
+    }
+
+    void enableInteractibleObjects(bool enabled)
+    {
+        for (int i = 0; i < m_roomsObjects.Length; i++)
+            m_roomsObjects[i].GetComponentInChildren<Collider>().enabled = enabled;
+    }
 
     void endGame()
     {
         PersistentData.m_playersStats = m_players;
         SceneManager.LoadScene("Final Scene");
+    }
+
+    Substate checkChangeSubstate()
+    {
+        switch (m_substate)
+        {
+            case Substate.WaitForStart:
+                if ((Time.time - m_sceneOnTime) > m_waitForStartDuration)
+                {
+                    enableTorches(true);
+                    enableInteractibleObjects(true);
+                    return Substate.Game;
+                }
+                break;
+
+            case Substate.Game:
+                if (!debug)
+                    if (m_nbSurvivors == 1)
+                        return Substate.WaitForEnd;
+                if (Input.GetButtonDown("Start"))
+                    return Substate.Pause;
+                break;
+
+            case Substate.WaitForEnd:
+                if ((Time.time - m_sceneOnTime) > m_waitForEndDuration)
+                    endGame();
+                break;
+
+            case Substate.Pause:
+                if (Input.GetButtonDown("Start"))
+                    return Substate.Game;
+
+                if (Input.GetButtonDown("Exit"))
+                    Application.Quit();
+                break;
+        }
+
+        return m_substate;
+    }
+
+    void executeSubstate()
+    {
+        switch (m_substate)
+        {
+            case Substate.WaitForStart:
+                m_lightManager.update(Time.time);
+                int nbSurvivors = 0;
+                for (int i = 0; i < m_players.Length; i++)
+                {
+                    if (m_players[i] != null)
+                    {
+                        if (m_players[i].m_readyForDead)
+                        {
+                            playerIsDead(m_players[i].transform.position, m_players[i].m_colorMat);
+                            Destroy(m_players[i].gameObject); // TO DO
+                        }
+
+                        m_players[i].updatePlayer();
+                        nbSurvivors += 1;
+                    }
+                }
+                break;
+
+            case Substate.Game:
+                m_lightManager.update(Time.time);
+                m_nbSurvivors = 0;
+                for (int i = 0; i < m_players.Length; i++)
+                {
+                    if (m_players[i] != null)
+                    {
+                        if (m_players[i].m_readyForDead)
+                        {
+                            playerIsDead(m_players[i].transform.position, m_players[i].m_colorMat);
+                            Destroy(m_players[i].gameObject); // TO DO
+
+                            continue;
+                        }
+
+                        m_players[i].updatePlayer();
+                        m_nbSurvivors += 1;
+                    }
+                }
+                break;
+
+            case Substate.WaitForEnd:
+                m_lightManager.update(Time.time);
+
+                m_nbSurvivors = 0;
+                for (int i = 0; i < m_players.Length; i++)
+                {
+                    if (m_players[i] != null)
+                    {
+                        if (m_players[i].m_readyForDead)
+                        {
+                            playerIsDead(m_players[i].transform.position, m_players[i].m_colorMat);
+                            Destroy(m_players[i].gameObject); // TO DO
+                        }
+
+                        m_players[i].updatePlayer();
+                        m_nbSurvivors += 1;
+                    }
+                }
+                break;
+
+            case Substate.Pause:
+                PauseCanvas.enabled = !PauseCanvas.enabled;
+                break;
+        }
     }
 }
