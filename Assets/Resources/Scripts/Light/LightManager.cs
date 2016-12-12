@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using EZCameraShake;
 
 public class LightManager
 {
@@ -16,7 +17,8 @@ public class LightManager
     private Light [] m_windowsLights;
 
     private float m_startStateTime;
-    private float m_roomLightsOnDuration = 5;
+    private float m_roomLightsOnDuration = 5.0f;
+    private float m_roomLightsIntensity = 4.0f;
 
     private int m_lightningNumber;
     private int m_currentLightningNumber;
@@ -25,6 +27,11 @@ public class LightManager
     private float m_lightningDuration = 0.3f;
     private float m_lightningIntensity = 3.5f;
     private bool m_lightningOn;
+
+    private float Magnitude = 2.5f;
+    private float Roughness = 13.5f;
+    private float FadeInTime = 0.5f;
+    private float FadeOutTime = 1.0f;
 
     public LightManager(float gameTime)
     {
@@ -62,7 +69,7 @@ public class LightManager
         switch(m_substate)
         {
             case Substate.Start:
-            if(gameTime > m_startStateTime + m_roomLightsOnDuration)
+            if((gameTime-m_startStateTime) > m_roomLightsOnDuration)
             {
                 m_startStateTime = gameTime;
                 return Substate.Off;
@@ -94,10 +101,8 @@ public class LightManager
         switch(m_substate)
         {
             case Substate.Start:
-               float intensity = Mathf.Lerp(1.0f,0.0f,(gameTime-m_startStateTime) / m_roomLightsOnDuration);
-
                for(int i=0; i<m_roomLights.Length; i++)
-                    m_roomLights[i].intensity = intensity;
+                    m_roomLights[i].intensity = Mathf.Lerp(m_roomLightsIntensity,0.0f,(gameTime - m_startStateTime) / m_roomLightsOnDuration); ;
             break;
 
             case Substate.Lightning:
@@ -120,7 +125,9 @@ public class LightManager
                     m_timeSinceLastLightning = gameTime;
                     m_currentLightningNumber++;
 
-                    for(int i = 0; i < m_windowsLights.Length; i++)
+                    CameraShaker.Instance.ShakeOnce(Magnitude, Roughness, FadeInTime, FadeOutTime);
+
+                    for (int i = 0; i < m_windowsLights.Length; i++)
                         m_windowsLights[i].intensity = m_lightningIntensity;
                 }
             }
