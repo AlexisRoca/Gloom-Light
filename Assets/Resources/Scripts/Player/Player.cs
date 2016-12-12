@@ -42,6 +42,11 @@ public class Player : MonoBehaviour {
         if (this.m_isDead)
             return;
 
+        if(m_controller.GetType() == typeof(IA))
+        {
+            m_controller.updateControll();
+        }
+
         // Increase Time Alife
         m_timeAlife += Time.deltaTime;
 

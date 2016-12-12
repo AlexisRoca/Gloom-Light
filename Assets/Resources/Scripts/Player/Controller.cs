@@ -11,4 +11,6 @@ abstract public class Controller : MonoBehaviour {
     abstract public Vector2 getAngleTorchlight();
     abstract public bool getInteractInput();
     abstract public bool getLightInput();
+
+    abstract public void updateControll();
 }
