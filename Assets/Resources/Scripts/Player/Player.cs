@@ -7,6 +7,7 @@ public class Player : MonoBehaviour {
     public GameObject m_torchlight;
 
     public bool m_readyForDead = false;
+    private bool m_isDead = false;
     public Material m_colorMat;
     public bool m_enableInteractions;
 
@@ -16,8 +17,9 @@ public class Player : MonoBehaviour {
     public int m_nbKill = 0;
     public float m_timeAlife = 0.0f;
 
-    public GameObject m_torchlight;
+    //public GameObject m_torchlight;
     public AudioSource m_torchSound;
+    public Animator m_animator;
     private Quaternion m_prevLightOrientation;
     protected CharacterController m_characterController;
 
@@ -69,53 +71,27 @@ public class Player : MonoBehaviour {
         // Get interact input
         if(m_enableInteractions)
         {
-        if(m_controller.getLightInput())
-        {
-                if(!m_torchlight.GetComponent<Torchlight>().setOn())
-                m_nbPressUseless += 1;
-            else
+            if(m_controller.getLightInput())
             {
-                m_torchSound.Play();
-                m_torchlight.GetComponent<Light>().enabled = true;
+                if (!m_torchlight.GetComponent<Torchlight>().setOn())
+                    m_nbPressUseless += 1;
+                else
+                {
+                    m_torchSound.Play();
+                    m_torchlight.GetComponent<Light>().enabled = true;
+                }
+            }
         }
     }
-    }
 
-    public void updatePlayerWithoutLight()
-    {
-        // Increase Time Alife
-        m_timeAlife += Time.deltaTime;
-
-        // Get angle of right and left stick
-        Vector3 displacementVector = m_controller.getDisplacement();
-        Vector2 aimVector = m_controller.getAngleTorchlight();
-
-        // Move character
-        m_characterController.Move(displacementVector * Time.deltaTime);
-
-        // Aim
-        if(aimVector.x != 0.0f || aimVector.y != 0.0f)
-        {
-            float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
-            this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
-
-            m_prevLightOrientation = m_torchlight.transform.rotation;
-        }
-        else if(displacementVector.x != 0.0f || displacementVector.z != 0.0f)
-        {
-            float lightAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
-            this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
-
-            m_prevLightOrientation = m_torchlight.transform.rotation;
-        }
-        else
-        {
-            m_torchlight.transform.rotation = m_prevLightOrientation;
-        }
-    }
 
     void OnTriggerStay(Collider collider)
     {
+        // If is Dead
+        if (this.m_isDead)
+            return;
+
+
         if (collider.gameObject.tag == "Torch" && collider.GetComponentInParent<Light>().GetComponentInParent<Player>().getLightOn())
         {
             // Try if there is no obstable between both players
@@ -135,6 +111,16 @@ public class Player : MonoBehaviour {
             }
         }
     }
+
+
+    // Dead animation and over displacements
+    public void deadNow()
+    {
+        this.m_isDead = true;
+
+        m_animator.Play("Death");
+    }
+
 
     // Class functions
     public Player(Controller controller)

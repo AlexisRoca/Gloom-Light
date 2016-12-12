@@ -201,7 +201,8 @@ public class GameEngine : MonoBehaviour
                         if(m_players[i].m_readyForDead)
                         {
                             playerIsDead(m_players[i].transform.position, m_players[i].m_colorMat);
-                            Destroy(m_players[i].gameObject); // TO DO
+                            m_players[i].deadNow();
+                            // Destroy(m_players[i].gameObject); // TO DO
                         }
 
                         m_players[i].updatePlayer();
@@ -220,7 +221,7 @@ public class GameEngine : MonoBehaviour
                         if(m_players[i].m_readyForDead)
                         {
                             playerIsDead(m_players[i].transform.position, m_players[i].m_colorMat);
-                            Destroy(m_players[i].gameObject); // TO DO
+                            // Destroy(m_players[i].gameObject); // TO DO
 
                             continue;
                         }
