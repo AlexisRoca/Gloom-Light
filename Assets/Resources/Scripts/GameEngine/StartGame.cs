@@ -44,6 +44,11 @@ public class StartGame : MonoBehaviour
                 else
                     m_nbActivePlayer--;
             }
+
+            if (Input.GetButtonDown("XButton_p" + (i + 1).ToString()))
+            {
+                SceneManager.LoadScene("Commands Scene");
+            }
         }
 
         if(m_nbActivePlayer > 1)
