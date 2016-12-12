@@ -46,12 +46,10 @@ public class GameEngine : MonoBehaviour
                     nbSurvivors += 1;
                 }
             }
-
-
+            
             if(!debug)
                 if(nbSurvivors == 1)
                     endGame();
-
         }
         else
         {
