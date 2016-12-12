@@ -7,7 +7,7 @@ public class Player : MonoBehaviour {
     [HideInInspector] public Controller m_controller;
 
     private bool m_interact;
-    private bool m_readyForDead = false;
+    public bool m_readyForDead = false;
     private Quaternion m_prevLightOrientation;
 
     public int m_nbOnLight = 0;

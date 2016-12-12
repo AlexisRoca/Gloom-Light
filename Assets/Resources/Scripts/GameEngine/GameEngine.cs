@@ -55,11 +55,15 @@ public class GameEngine : MonoBehaviour
         {
             // Exit Game Condition
             for(int i = 0; i < m_players.Length; i++)
-                if(m_players[i].m_controller.getExitInput())
+            {
+                if(m_players[i].m_readyForDead)
+                    Destroy(m_players[i].gameObject);
+
+                if (m_players[i].m_controller.getExitInput())
                     Application.Quit();
+            }
         }
     }
-
 
     void loadScene()
     {
