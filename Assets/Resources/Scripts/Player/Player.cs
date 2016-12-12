@@ -22,6 +22,7 @@ public class Player : MonoBehaviour {
     private Quaternion m_prevLightOrientation;
     protected CharacterController m_characterController;
 
+
     private void Awake()
     {
         for (int i = 0; i < this.transform.childCount; i++)
@@ -37,6 +38,9 @@ public class Player : MonoBehaviour {
 
     public void updatePlayer()
     {
+        if (this.m_isDead)
+            return;
+
         // Increase Time Alife
         m_timeAlife += Time.deltaTime;
 
@@ -81,14 +85,18 @@ public class Player : MonoBehaviour {
                 }
             }
         }
+
+        // Animation
+        if(displacementVector != Vector3.zero )
+        {
+            m_animator.Play("Walk");
+        }
+        else
+        {
+            m_animator.Play("Idle");
+        }
     }
     
-
-    public void updatePlayerWithoutLight()
-    {
-        // Increase Time Alife
-        m_timeAlife += Time.deltaTime;
-
     void OnTriggerStay(Collider collider)
     {
         // If is Dead
