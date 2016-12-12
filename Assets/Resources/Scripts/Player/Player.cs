@@ -42,6 +42,11 @@ public class Player : MonoBehaviour {
         if (this.m_isDead)
             return;
 
+        if(m_controller.GetType() == typeof(IA))
+        {
+            m_controller.updateControll();
+        }
+
         // Increase Time Alife
         m_timeAlife += Time.deltaTime;
 
@@ -93,6 +98,7 @@ public class Player : MonoBehaviour {
                     m_torchSound.Play();
                     m_torchlight.GetComponent<Light>().enabled = true;
                     m_prevLightInput = m_controller.getLightInput();
+                    m_nbOnLight += 1;
                 }
             }
             else if(m_controller.getLightInput() != m_prevLightInput)
@@ -110,7 +116,7 @@ public class Player : MonoBehaviour {
         }
     }
     
-    void OnTriggerStay(Collider collider)
+    void OnTriggerEnter(Collider collider)
     {
          if (collider.gameObject.tag == "Torch" && collider.GetComponentInParent<Light>().GetComponentInParent<Player>().getLightOn())
         {
@@ -125,7 +131,7 @@ public class Player : MonoBehaviour {
             {
                 if (hit.collider.gameObject == player.gameObject)
                 {
-                    this.m_nbKill += 1;
+                    collider.GetComponentInParent<Light>().GetComponentInParent<Player>().m_nbKill += 1;
                     this.m_waitForDying = true;
                 }
             }

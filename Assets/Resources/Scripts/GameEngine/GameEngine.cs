@@ -20,13 +20,14 @@ public class GameEngine : MonoBehaviour
     private AbstractObject[] m_roomsObjects;
     private Player[] m_players;
     private GameObject[] m_deadSpotLight;
+    private GameObject[] m_spawners;
     private LightManager m_lightManager;
     private int m_nbSurvivors = 0;
 
     private Substate m_substate;
 
     public float m_waitForStartDuration = 5.0f;
-    public float m_waitForEndDuration = 5.0f;
+    public float m_waitForEndDuration = 3.0f;
     private float m_sceneOnTime;
 
     public void Start()
@@ -34,8 +35,8 @@ public class GameEngine : MonoBehaviour
         m_lightManager = new LightManager(Time.time);
         m_lightManager.initLights();
 
-        initPlayers();
         loadScene();
+        initPlayers();
 
         enablePlayerInteractions(false);
 
@@ -74,6 +75,7 @@ public class GameEngine : MonoBehaviour
     {
         // Get all elements from the scene
         m_roomsObjects = GameObject.FindObjectsOfType(typeof(AbstractObject)) as AbstractObject[];
+        m_spawners = GameObject.FindGameObjectsWithTag("Spawn");
     }
 
     void initPlayers()
@@ -86,7 +88,7 @@ public class GameEngine : MonoBehaviour
             for(int i = 0; i < 2; i++)
             {
                 Player player = Instantiate(m_prefabPlayer) as Player;//"Player" + i.ToString()).AddComponent<Player>();
-                player.transform.position = new Vector3(0.0f, 0.5f, 2.0f * i);
+                player.transform.position = m_spawners[i].transform.position;
 
                 GameObject go = GameObject.Find("GUI_Player" + (i + 1).ToString());
                 for(int j = 0; j < go.transform.childCount; j++)
@@ -95,6 +97,8 @@ public class GameEngine : MonoBehaviour
 
 
                 Pad pad = new Pad();
+                //IA pad = new IA();
+
                 pad.joystickNumber = i + 1;
                 player.m_controller = pad;
                 player.m_enableInteractions = false;
@@ -121,7 +125,7 @@ public class GameEngine : MonoBehaviour
                     continue;
 
                 Player player = Instantiate(m_prefabPlayer) as Player;
-                player.transform.position = new Vector3(0.0f, 0.5f, 2.0f * i);
+                player.transform.position = m_spawners[i].transform.position;
 
                 GameObject go = GameObject.Find("GUI_Player" + (i + 1).ToString());
                 for(int j = 0; j < go.transform.childCount; j++)
@@ -170,7 +174,10 @@ public class GameEngine : MonoBehaviour
             case Substate.Game:
                 if(!debug)
                     if(m_nbSurvivors == 1)
+                    {
+                        m_sceneOnTime = Time.time;
                         return Substate.WaitForEnd;
+                    }
 
                 if(Input.GetButtonDown("Start"))
                 {
