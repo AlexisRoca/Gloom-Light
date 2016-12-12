@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-abstract public class AbstractObjects : MonoBehaviour
+abstract public class AbstractObject : MonoBehaviour
 {
     protected Animator m_animator;
     protected AudioSource m_audioSource;

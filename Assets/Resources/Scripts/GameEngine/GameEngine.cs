@@ -8,7 +8,7 @@ public class GameEngine : MonoBehaviour
     public Canvas PauseCanvas;
     public bool debug;
 
-    private AbstractObjects[] m_roomsObjects;
+    private AbstractObject[] m_roomsObjects;
     private Torchlight[] m_torchesPlayer;
     private Player[] m_players;
     private LightManager m_lightManager;
@@ -48,9 +48,6 @@ public class GameEngine : MonoBehaviour
     {
         m_substate = checkChangeSubstate();
         executeSubstate();
-
-        Debug.Log(m_substate);
-        Debug.Log(m_roomsObjects);
     }
 
     void playerIsDead(Vector3 pos, Material colorMat)
@@ -68,8 +65,8 @@ public class GameEngine : MonoBehaviour
     void loadScene()
     {
         // Get all elements from the scene
-        m_roomsObjects = GameObject.FindObjectsOfType<AbstractObjects>();
-        m_torchesPlayer = GameObject.FindObjectsOfType<Torchlight>();
+        m_roomsObjects = GameObject.FindObjectsOfType(typeof (AbstractObject)) as AbstractObject[];
+        m_torchesPlayer = GameObject.FindObjectsOfType(typeof(Torchlight)) as Torchlight[];
     }
 
     void initPlayers()
