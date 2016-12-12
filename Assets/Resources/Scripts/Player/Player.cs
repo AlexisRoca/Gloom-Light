@@ -16,7 +16,6 @@ public class Player : MonoBehaviour {
     public int m_nbKill = 0;
     public float m_timeAlife = 0.0f;
 
-    public GameObject m_torchlight;
     public AudioSource m_torchSound;
     private Quaternion m_prevLightOrientation;
     protected CharacterController m_characterController;
@@ -47,7 +46,7 @@ public class Player : MonoBehaviour {
         m_characterController.Move(displacementVector * Time.deltaTime);
 
         // Aim
-        if(aimVector.x != 0.0f || aimVector.y != 0.0f)
+        if (aimVector.x != 0.0f || aimVector.y != 0.0f)
         {
             float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
             this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
@@ -67,19 +66,21 @@ public class Player : MonoBehaviour {
         }
 
         // Get interact input
-        if(m_enableInteractions)
+        if (m_enableInteractions)
         {
-        if(m_controller.getLightInput())
-        {
-                if(!m_torchlight.GetComponent<Torchlight>().setOn())
-                m_nbPressUseless += 1;
-            else
+            if (m_controller.getLightInput())
             {
-                m_torchSound.Play();
-                m_torchlight.GetComponent<Light>().enabled = true;
+                if (!m_torchlight.GetComponent<Torchlight>().setOn())
+                    m_nbPressUseless += 1;
+                else
+                {
+                    m_torchSound.Play();
+                    m_torchlight.GetComponent<Light>().enabled = true;
+                }
+            }
         }
     }
-    }
+    
 
     public void updatePlayerWithoutLight()
     {
