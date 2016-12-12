@@ -15,12 +15,13 @@ public class Player : MonoBehaviour {
     public int m_nbKill = 0;
     public float m_timeAlife = 0.0f;
 
-
     public GameObject m_torchlight;
 
     private void Awake()
     {
-        m_torchlight = this.transform.GetChild(0).gameObject;
+        for (int i = 0; i < this.transform.childCount; i++)
+            if (this.transform.GetChild(i).transform.name == "Torch")
+                m_torchlight = this.transform.GetChild(i).gameObject;
     }
 
     // Start & Update functions
