@@ -25,7 +25,7 @@ public class GameEngine : MonoBehaviour
     private Substate m_substate;
 
     public float m_waitForStartDuration = 5.0f;
-    public float m_waitForEndDuration = 5.0f;
+    public float m_waitForEndDuration = 3.0f;
     private float m_sceneOnTime;
 
     public void Start()
@@ -166,7 +166,10 @@ public class GameEngine : MonoBehaviour
             case Substate.Game:
                 if(!debug)
                     if(m_nbSurvivors == 1)
+                    {
+                        m_sceneOnTime = Time.time;
                         return Substate.WaitForEnd;
+                    }
 
                 if(Input.GetButtonDown("Start"))
                 {
