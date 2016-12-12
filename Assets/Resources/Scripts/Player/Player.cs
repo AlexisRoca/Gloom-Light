@@ -7,7 +7,7 @@ public class Player : MonoBehaviour {
     [HideInInspector] public Controller m_controller;
 
     private bool m_interact;
-    private bool m_readyForDead = false;
+    public bool m_readyForDead = false;
     private Quaternion m_prevLightOrientation;
 
     public int m_nbOnLight = 0;
@@ -69,23 +69,27 @@ public class Player : MonoBehaviour {
 
         if(m_controller.getLightInput())
         {
-            if(!m_torchlight.GetComponent<Torchlight>().setOn())
+            if (!m_torchlight.GetComponent<Torchlight>().setOn())
                 m_nbPressUseless += 1;
+            else
+                m_torchlight.GetComponent<Light>().enabled = true;
         }
     }
 
     void OnTriggerStay(Collider collider)
     {
-        if (collider.gameObject.tag == "Torch" && this.getLightOn())
+        if (collider.gameObject.tag == "Torch" && collider.GetComponentInParent<Light>().GetComponentInParent<Player>().getLightOn())
         {
             // Try if there is no obstable between both players
             RaycastHit hit;
+            GameObject player = collider.transform.parent.parent.parent.gameObject;
+
             Vector3 origin = this.transform.position;
-            Vector3 direction = (collider.transform.position - this.transform.position).normalized;
+            Vector3 direction = (player.transform.position - this.transform.position).normalized;
 
             if (Physics.Raycast(origin, direction, out hit))
             {
-                if (hit.collider.gameObject == collider.gameObject)
+                if (hit.collider.gameObject == player.gameObject)
                 {
                     this.m_nbKill += 1;
                     this.m_readyForDead = true;
