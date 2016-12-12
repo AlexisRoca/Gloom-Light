@@ -16,8 +16,8 @@ public class Player : MonoBehaviour {
     public int m_nbKill = 0;
     public float m_timeAlife = 0.0f;
 
-    public GameObject m_torchlight;
     public AudioSource m_torchSound;
+    private bool m_prevLightInput = false;
     private Quaternion m_prevLightOrientation;
     protected CharacterController m_characterController;
 
@@ -69,49 +69,35 @@ public class Player : MonoBehaviour {
         // Get interact input
         if(m_enableInteractions)
         {
-        if(m_controller.getLightInput())
-        {
-                if(!m_torchlight.GetComponent<Torchlight>().setOn())
-                m_nbPressUseless += 1;
-            else
+            if(m_controller.getLightInput())
             {
-                m_torchSound.Play();
-                m_torchlight.GetComponent<Light>().enabled = true;
+                if(!m_torchlight.GetComponent<Torchlight>().setOn())
+                {
+                    // ENTER si state torchlight = ON ou COOLDOWN
+
+                    if(m_controller.getLightInput() != m_prevLightInput)
+                    {
+                        m_nbPressUseless += 1;
+                        m_prevLightInput = m_controller.getLightInput();
+                        Debug.Log(m_nbPressUseless);
+                    }
+                }
+                else
+                {
+                    m_torchSound.Play();
+                    m_torchlight.GetComponent<Light>().enabled = true;
+                    m_prevLightInput = m_controller.getLightInput();
+                }
+            }
+            else if(m_controller.getLightInput() != m_prevLightInput)
+                m_prevLightInput = m_controller.getLightInput();
         }
-    }
-    }
-
-    public void updatePlayerWithoutLight()
-    {
-        // Increase Time Alife
-        m_timeAlife += Time.deltaTime;
-
-        // Get angle of right and left stick
-        Vector3 displacementVector = m_controller.getDisplacement();
-        Vector2 aimVector = m_controller.getAngleTorchlight();
-
-        // Move character
-        m_characterController.Move(displacementVector * Time.deltaTime);
-
-        // Aim
-        if(aimVector.x != 0.0f || aimVector.y != 0.0f)
-        {
-            float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
-            this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
-
-            m_prevLightOrientation = m_torchlight.transform.rotation;
-        }
-        else if(displacementVector.x != 0.0f || displacementVector.z != 0.0f)
-        {
-            float lightAngle = Mathf.Atan2(-displacementVector.z, displacementVector.x) * Mathf.Rad2Deg + 90.0f;
-            this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
-
-            m_prevLightOrientation = m_torchlight.transform.rotation;
-        }
-        else
-        {
-            m_torchlight.transform.rotation = m_prevLightOrientation;
-        }
+        //else
+        //    if(m_controller.getLightInput() && m_controller.getLightInput() == m_prevLightInput)
+        //    {
+        //        m_nbPressUseless += 1;
+        //        Debug.Log(m_nbPressUseless);
+        //    }
     }
 
     void OnTriggerStay(Collider collider)
