@@ -18,6 +18,7 @@ public class Player : MonoBehaviour {
     public float m_timeAlife = 0.0f;
 
     public GameObject m_torchlight;
+    public AudioSource m_torchSound;
 
     private void Awake()
     {
@@ -73,7 +74,10 @@ public class Player : MonoBehaviour {
             if (!m_torchlight.GetComponent<Torchlight>().setOn())
                 m_nbPressUseless += 1;
             else
+            {
+                m_torchSound.Play();
                 m_torchlight.GetComponent<Light>().enabled = true;
+            }
         }
     }
 
