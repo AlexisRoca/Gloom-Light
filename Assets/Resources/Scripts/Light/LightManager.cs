@@ -33,6 +33,8 @@ public class LightManager
     private float FadeInTime = 0.5f;
     private float FadeOutTime = 1.0f;
 
+    private AudioSource LightningSound;
+
     public LightManager(float gameTime)
     {
         m_startStateTime = gameTime;
@@ -55,6 +57,11 @@ public class LightManager
 
         for(int i = 0; i < windowsLightsGO.Length; i++)
             m_windowsLights.SetValue(windowsLightsGO[i].GetComponent<Light>(),i);
+
+        // SoundLightning init
+        GameObject spotlight = GameObject.Find("Spotlight1");
+        LightningSound = spotlight.GetComponentInChildren<AudioSource>();
+        LightningSound.Stop();
     }
 
     public void update(float gameTime)
@@ -125,8 +132,9 @@ public class LightManager
                     m_timeSinceLastLightning = gameTime;
                     m_currentLightningNumber++;
 
+                    LightningSound.Play();
                     CameraShaker.Instance.ShakeOnce(Magnitude, Roughness, FadeInTime, FadeOutTime);
-
+                    
                     for (int i = 0; i < m_windowsLights.Length; i++)
                         m_windowsLights[i].intensity = m_lightningIntensity;
                 }
