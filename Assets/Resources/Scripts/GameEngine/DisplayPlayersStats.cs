@@ -27,6 +27,9 @@ public class DisplayPlayersStats : MonoBehaviour {
     Score uselessPress;
 
     Player[] m_player;
+    public string [] ColorId;
+
+
 
     // Use this for initialization
     void Start () {
@@ -35,8 +38,9 @@ public class DisplayPlayersStats : MonoBehaviour {
         getStats();
 
 
-        winnerText.text = "Winner !";
+        winnerText.text = ColorId[alife.id] + "  Win!";
         winnerText.color = alife.mat.color;
+        Debug.Log(alife.id);
 
         killText.text = "With " + (int)kill.max + " kill";
         killText.color = kill.mat.color;
