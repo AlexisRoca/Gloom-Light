@@ -12,6 +12,7 @@ public class GameEngine : MonoBehaviour
         Pause
     };
 
+    public Canvas m_hideFiveSeconds;
     public Player m_prefabPlayer;
     public Canvas PauseCanvas;
     public bool debug;
@@ -42,6 +43,8 @@ public class GameEngine : MonoBehaviour
         m_sceneOnTime = Time.time;
 
         m_nbSurvivors = m_players.Length;
+
+        m_hideFiveSeconds.enabled = true;
     }
 
     // Update is called once per frame
@@ -159,6 +162,7 @@ public class GameEngine : MonoBehaviour
                 if((Time.time - m_sceneOnTime) > m_waitForStartDuration)
                 {
                     enablePlayerInteractions(true);
+                    m_hideFiveSeconds.enabled = false;
                     return Substate.Game;
                 }
                 break;
