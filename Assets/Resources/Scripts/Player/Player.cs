@@ -7,6 +7,7 @@ public class Player : MonoBehaviour {
     public GameObject m_torchlight;
 
     public bool m_readyForDead = false;
+    private bool m_isDead = false;
     public Material m_colorMat;
     public bool m_enableInteractions;
 
@@ -18,8 +19,10 @@ public class Player : MonoBehaviour {
 
     public AudioSource m_torchSound;
     private bool m_prevLightInput = false;
+    public Animator m_animator;
     private Quaternion m_prevLightOrientation;
     protected CharacterController m_characterController;
+
 
     private void Awake()
     {
@@ -36,6 +39,9 @@ public class Player : MonoBehaviour {
 
     public void updatePlayer()
     {
+        if (this.m_isDead)
+            return;
+
         // Increase Time Alife
         m_timeAlife += Time.deltaTime;
 
@@ -47,7 +53,7 @@ public class Player : MonoBehaviour {
         m_characterController.Move(displacementVector * Time.deltaTime);
 
         // Aim
-        if(aimVector.x != 0.0f || aimVector.y != 0.0f)
+        if (aimVector.x != 0.0f || aimVector.y != 0.0f)
         {
             float lightAngle = Mathf.Atan2(aimVector.y, aimVector.x) * Mathf.Rad2Deg + 90.0f;
             this.transform.localEulerAngles = new Vector3(0.0f, lightAngle, 0.0f);
@@ -67,7 +73,7 @@ public class Player : MonoBehaviour {
         }
 
         // Get interact input
-        if(m_enableInteractions)
+        if (m_enableInteractions)
         {
             if(m_controller.getLightInput())
             {
@@ -92,16 +98,25 @@ public class Player : MonoBehaviour {
             else if(m_controller.getLightInput() != m_prevLightInput)
                 m_prevLightInput = m_controller.getLightInput();
         }
-        //else
-        //    if(m_controller.getLightInput() && m_controller.getLightInput() == m_prevLightInput)
-        //    {
-        //        m_nbPressUseless += 1;
-        //        Debug.Log(m_nbPressUseless);
-        //    }
+    
+        // Animation
+        if(displacementVector != Vector3.zero)
+        {
+            m_animator.SetBool("moving", true);
+        }
+        else
+        {
+            m_animator.SetBool("moving", false);
+        }
     }
-
+    
     void OnTriggerStay(Collider collider)
     {
+        // If is Dead
+        if (this.m_isDead)
+            return;
+
+
         if (collider.gameObject.tag == "Torch" && collider.GetComponentInParent<Light>().GetComponentInParent<Player>().getLightOn())
         {
             // Try if there is no obstable between both players
@@ -121,6 +136,17 @@ public class Player : MonoBehaviour {
             }
         }
     }
+
+
+    // Dead animation and over displacements
+    public void deadNow()
+    {
+        this.m_isDead = true;
+
+        m_animator.SetBool("die", true);
+        m_animator.SetBool("moving", false);
+    }
+
 
     // Class functions
     public Player(Controller controller)
