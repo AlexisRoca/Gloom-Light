@@ -61,9 +61,9 @@ public class GameEngine : MonoBehaviour
         spotLightObj.transform.position = new Vector3(transform.position[0], 5.0f, transform.position[2]);
         spotLightObj.transform.eulerAngles = new Vector3(90.0f, 0.0f, 0.0f);
         Light pointLight = spotLightObj.AddComponent<Light>();
-        pointLight.type = LightType.Point;
-        pointLight.range = 15.0f;
-        pointLight.intensity = 6.0f;
+        pointLight.type = LightType.Spot;
+        pointLight.spotAngle = 100.0f;
+        pointLight.intensity = 20.0f;
         pointLight.color = colorMat.color;
     }
 
@@ -210,14 +210,15 @@ public class GameEngine : MonoBehaviour
                 m_lightManager.update(Time.time);
                 for(int i = 0; i < m_players.Length; i++)
                 {
-                    if(m_players[i] != null)
+                    if((m_players[i] != null) && !m_players[i].m_isDead)
                     {
-                        if(m_players[i].m_readyForDead)
+                        if(m_players[i].m_waitForDying)
                         {
-                            playerIsDead(m_players[i].transform.position, m_players[i].m_colorMat);
+                            playerIsDead(m_players[i].transform, m_players[i].m_colorMat);
                             m_players[i].deadNow();
-                            // Destroy(m_players[i].gameObject); // TO DO
+                            m_players[i].m_waitForDying = false;
                             m_nbSurvivors--;
+
                             continue;
                         }
 
