@@ -6,7 +6,6 @@ public class Torchlight : MonoBehaviour
 {
     enum Substate
     {
-        WaitForStart,
         Ready,
         On,
         Cooldown
@@ -26,7 +25,7 @@ public class Torchlight : MonoBehaviour
 
     void Start ()
     {
-        m_substate = Substate.WaitForStart;
+        m_substate = Substate.Ready;
         m_light = this.GetComponentInChildren<Light>();
         m_cone = this.GetComponentInChildren<Light>().GetComponentInChildren<Renderer>();
 
@@ -65,11 +64,6 @@ public class Torchlight : MonoBehaviour
     {
         switch(m_substate)
         {
-            case Substate.WaitForStart:
-            if(Time.time > m_waitForStartDuration)
-                return Substate.Ready;
-            break;
-
             case Substate.Ready:
             if(m_light.enabled)
                 return Substate.On;
