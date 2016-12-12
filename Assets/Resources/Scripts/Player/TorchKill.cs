@@ -8,6 +8,8 @@ public class TorchKill : MonoBehaviour {
 
     void OnTriggerStay(Collider collider)
     {
+        Debug.Log("Called");
+         
         if (collider.gameObject.tag == "Player" && m_player.getLightOn())
         {
             // Try if there is no obstable between both players
