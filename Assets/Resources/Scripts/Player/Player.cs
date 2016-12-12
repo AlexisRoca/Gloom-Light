@@ -18,6 +18,7 @@ public class Player : MonoBehaviour {
     public float m_timeAlife = 0.0f;
 
     public AudioSource m_torchSound;
+    private bool m_prevLightInput = false;
     public Animator m_animator;
     private Quaternion m_prevLightOrientation;
     protected CharacterController m_characterController;
@@ -74,20 +75,32 @@ public class Player : MonoBehaviour {
         // Get interact input
         if (m_enableInteractions)
         {
-            if (m_controller.getLightInput())
+            if(m_controller.getLightInput())
             {
-                if (!m_torchlight.GetComponent<Torchlight>().setOn())
-                    m_nbPressUseless += 1;
+                if(!m_torchlight.GetComponent<Torchlight>().setOn())
+                {
+                    // ENTER si state torchlight = ON ou COOLDOWN
+
+                    if(m_controller.getLightInput() != m_prevLightInput)
+                    {
+                        m_nbPressUseless += 1;
+                        m_prevLightInput = m_controller.getLightInput();
+                        Debug.Log(m_nbPressUseless);
+                    }
+                }
                 else
                 {
                     m_torchSound.Play();
                     m_torchlight.GetComponent<Light>().enabled = true;
+                    m_prevLightInput = m_controller.getLightInput();
                 }
             }
+            else if(m_controller.getLightInput() != m_prevLightInput)
+                m_prevLightInput = m_controller.getLightInput();
         }
-
+    
         // Animation
-        if(displacementVector != Vector3.zero )
+        if(displacementVector != Vector3.zero)
         {
             m_animator.SetBool("moving", true);
         }
