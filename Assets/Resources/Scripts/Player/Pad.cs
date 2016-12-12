@@ -6,6 +6,9 @@ public class Pad : Controller
     public int joystickNumber = 1;
     string joystickString;
 
+    public override void updateControll()
+    { }
+
     public override Vector3 getDisplacement()
     {
         joystickString = joystickNumber.ToString();

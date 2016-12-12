@@ -94,6 +94,8 @@ public class GameEngine : MonoBehaviour
 
 
                 Pad pad = new Pad();
+                //IA pad = new IA();
+
                 pad.joystickNumber = i + 1;
                 player.m_controller = pad;
                 player.m_enableInteractions = false;

@@ -4,7 +4,9 @@ using System;
 
 public class IA : Controller
 {
-    int m_direction = 0;
+    public int joystickNumber = 1;
+
+    int m_direction = (int)UnityEngine.Random.Range(0.0f, 5.0f);
 
     bool m_interact = false;
     bool m_light = false;
@@ -17,8 +19,9 @@ public class IA : Controller
     float timerD = 0.0f;
     float timerI = 0.0f;
     float timerL = 0.0f;
+    
 
-    void Update()
+    public override void updateControll()
     {
         timerD += Time.deltaTime;
         timerL += Time.deltaTime;
@@ -81,7 +84,7 @@ public class IA : Controller
                 break;
         }
 
-        return result;
+        return result * 5.0f;
     }
 
     public override Vector2 getAngleTorchlight()
@@ -100,7 +103,7 @@ public class IA : Controller
     }
 
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider collider)
     {
         m_interact = true;
     }
