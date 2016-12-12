@@ -49,7 +49,7 @@ public class DisplayPlayersStats : MonoBehaviour {
             if (Input.GetButtonDown("InteractButton_p" + (i + 1).ToString()))
                 SceneManager.LoadScene("Start Scene");
 
-            if (Input.GetButtonDown("ExitButton_p" + (i + 1).ToString()))
+            if (Input.GetButtonDown("XButton_p" + (i + 1).ToString()))
                 Application.Quit();
         }
     }
