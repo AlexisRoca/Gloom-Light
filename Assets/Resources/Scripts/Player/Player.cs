@@ -6,8 +6,8 @@ public class Player : MonoBehaviour {
     [HideInInspector] public Controller m_controller;
     public GameObject m_torchlight;
 
-    public bool m_readyForDead = false;
-    private bool m_isDead = false;
+    public bool m_waitForDying = false;
+    public bool m_isDead = false;
     public Material m_colorMat;
     public bool m_enableInteractions;
 
@@ -126,7 +126,7 @@ public class Player : MonoBehaviour {
                 if (hit.collider.gameObject == player.gameObject)
                 {
                     this.m_nbKill += 1;
-                    this.m_readyForDead = true;
+                    this.m_waitForDying = true;
                 }
             }
         }
@@ -137,7 +137,6 @@ public class Player : MonoBehaviour {
     public void deadNow()
     {
         this.m_isDead = true;
-
         m_animator.SetBool("die", true);
         m_animator.SetBool("moving", false);
     }
