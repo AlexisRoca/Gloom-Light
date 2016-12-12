@@ -99,12 +99,7 @@ public class Player : MonoBehaviour {
     
     void OnTriggerStay(Collider collider)
     {
-        // If is Dead
-        if (this.m_isDead)
-            return;
-
-
-        if (collider.gameObject.tag == "Torch" && collider.GetComponentInParent<Light>().GetComponentInParent<Player>().getLightOn())
+         if (collider.gameObject.tag == "Torch" && collider.GetComponentInParent<Light>().GetComponentInParent<Player>().getLightOn())
         {
             // Try if there is no obstable between both players
             RaycastHit hit;
