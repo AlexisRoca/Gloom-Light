@@ -89,11 +89,11 @@ public class Player : MonoBehaviour {
         // Animation
         if(displacementVector != Vector3.zero )
         {
-            m_animator.Play("Walk");
+            m_animator.SetBool("moving", true);
         }
         else
         {
-            m_animator.Play("Idle");
+            m_animator.SetBool("moving", false);
         }
     }
     
@@ -130,7 +130,8 @@ public class Player : MonoBehaviour {
     {
         this.m_isDead = true;
 
-        m_animator.Play("Death");
+        m_animator.SetBool("die", true);
+        m_animator.SetBool("moving", false);
     }
 
 
