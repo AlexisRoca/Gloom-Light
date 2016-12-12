@@ -26,6 +26,13 @@ public class GameEngine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetButtonDown("Start"))
+        {
+            inPause = !inPause;
+            PauseCanvas.enabled = !PauseCanvas.enabled;
+        }
+
+
         if(!inPause)
         {
             m_lightManager.update(Time.time);
@@ -50,16 +57,6 @@ public class GameEngine : MonoBehaviour
             for(int i = 0; i < m_players.Length; i++)
                 if(m_players[i].m_controller.getExitInput())
                     Application.Quit();
-        }
-
-        // Pause gestion
-        for(int i = 0; i < m_players.Length; i++)
-        {
-            if(m_players[i].m_controller.getPauseInput())
-            {
-                inPause = !inPause;
-                PauseCanvas.enabled = !PauseCanvas.enabled;
-            }
         }
     }
 

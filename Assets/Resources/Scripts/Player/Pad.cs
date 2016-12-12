@@ -39,13 +39,6 @@ public class Pad : Controller
         return (Input.GetAxis("LightButton_p" + joystickString) != 0);
     }
 
-    public override bool getPauseInput()
-    {
-        joystickString = joystickNumber.ToString();
-
-        return Input.GetButtonDown("StartButton_p" + joystickString);
-    }
-
     public override bool getExitInput()
     {
         joystickString = joystickNumber.ToString();
