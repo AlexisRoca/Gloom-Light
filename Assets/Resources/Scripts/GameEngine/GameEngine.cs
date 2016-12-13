@@ -172,10 +172,10 @@ public class GameEngine : MonoBehaviour
 
                 if((Time.time - m_sceneOnTime) > m_waitForStartDuration)
                 {
-                enablePlayerInteractions(true);
-                m_hideFiveSeconds.enabled = false;
-                return Substate.Game;
-            }
+                    enablePlayerInteractions(true);
+                    m_hideFiveSeconds.enabled = false;
+                    return Substate.Game;
+                }
                 break;
 
             case Substate.Game:
