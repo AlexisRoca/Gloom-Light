@@ -40,7 +40,6 @@ public class DisplayPlayersStats : MonoBehaviour {
 
         winnerText.text = ColorId[alife.id] + "  Win!";
         winnerText.color = alife.mat.color;
-        Debug.Log(alife.id);
 
         killText.text = "With " + (int)kill.max + " kill";
         killText.color = kill.mat.color;
@@ -48,14 +47,23 @@ public class DisplayPlayersStats : MonoBehaviour {
         alifeText.text = "With " + (int)alife.max + " seconds survive";
         alifeText.color = alife.mat.color;
 
-        interractionText.text = "With " + (int)interraction.max + " interractions";
-        interractionText.color = interraction.mat.color;
+        if(interraction.max > 0)
+        {
+            interractionText.text = "With " + (int)interraction.max + " interractions";
+            interractionText.color = interraction.mat.color;
+        }
 
-        lightOnText.text = "With " + (int)lightOn.max + " torch turns on";
-        lightOnText.color = lightOn.mat.color;
+        if(lightOn.max > 0)
+        {
+            lightOnText.text = "With " + (int) lightOn.max + " torch turns on";
+            lightOnText.color = lightOn.mat.color;
+        }
 
-        uselessPressText.text = "With " + (int)uselessPress.max + " useless press";
-        uselessPressText.color = uselessPress.mat.color;
+        if(uselessPress.max > 0)
+        {
+            uselessPressText.text = "With " + (int) uselessPress.max + " useless press";
+            uselessPressText.color = uselessPress.mat.color;
+        }
 
     }
 

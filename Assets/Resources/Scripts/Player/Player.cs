@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
 
@@ -22,6 +23,8 @@ public class Player : MonoBehaviour {
     public Animator m_animator;
     private Quaternion m_prevLightOrientation;
     protected CharacterController m_characterController;
+
+    [HideInInspector] public GameObject m_UI_icon;
 
 
     private void Awake()
@@ -90,7 +93,6 @@ public class Player : MonoBehaviour {
                     {
                         m_nbPressUseless += 1;
                         m_prevLightInput = m_controller.getLightInput();
-                        Debug.Log(m_nbPressUseless);
                     }
                 }
                 else
@@ -118,24 +120,27 @@ public class Player : MonoBehaviour {
     
     void OnTriggerStay(Collider collider)
     {
-        if(collider.gameObject.tag == "Torch")
+        if(!m_isDead)
         {
-            Player collidedPlayer = collider.GetComponentInParent<Light>().GetComponentInParent<Player>();
-
-            // Try if there is no obstable between both players
-            RaycastHit hit;
-
-            Vector3 origin = collidedPlayer.transform.position;
-            Vector3 direction = (this.transform.position - origin).normalized;
-
-            if(Physics.Raycast(origin,direction,out hit))
+            if(collider.gameObject.tag == "Torch")
             {
-                if(hit.collider.gameObject == this.gameObject)
+                Player collidedPlayer = collider.GetComponentInParent<Light>().GetComponentInParent<Player>();
+
+                // Try if there is no obstable between both players
+                RaycastHit hit;
+
+                Vector3 origin = collidedPlayer.transform.position;
+                Vector3 direction = (this.transform.position - origin).normalized;
+
+                if(Physics.Raycast(origin,direction,out hit))
                 {
-                    if(collidedPlayer.getLightOn())
+                    if(hit.collider.gameObject == this.gameObject)
                     {
-                        collider.GetComponentInParent<Light>().GetComponentInParent<Player>().m_nbKill += 1;
-                        this.m_waitForDying = true;
+                        if(collidedPlayer.getLightOn())
+                        {
+                            collider.GetComponentInParent<Light>().GetComponentInParent<Player>().m_nbKill += 1;
+                            this.m_waitForDying = true;
+                        }
                     }
                 }
             }
@@ -149,6 +154,7 @@ public class Player : MonoBehaviour {
         this.m_isDead = true;
         m_animator.SetBool("die", true);
         m_animator.SetBool("moving", false);
+        m_UI_icon.GetComponent<Image>().color = new Color(1.0f,1.0f,1.0f,0.3f);
     }
 
 

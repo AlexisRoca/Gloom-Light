@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameEngine : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class GameEngine : MonoBehaviour
     };
 
     public Canvas m_hideFiveSeconds;
+    public Text m_introText;
+
     public Player m_prefabPlayer;
     public Canvas PauseCanvas;
     public bool debug;
@@ -129,8 +132,13 @@ public class GameEngine : MonoBehaviour
 
                 GameObject go = GameObject.Find("GUI_Player" + (i + 1).ToString());
                 for(int j = 0; j < go.transform.childCount; j++)
+                {
                     if(go.transform.GetChild(j).transform.name == "Battery")
                         player.m_torchlight.GetComponent<Torchlight>().m_batteryUI = go.transform.GetChild(j).gameObject;
+                    
+                    else if(go.transform.GetChild(j).transform.name == "PlayerIcon")
+                        player.m_UI_icon = go.transform.GetChild(j).gameObject;
+                }
 
 
                 Pad pad = new Pad();
@@ -222,6 +230,9 @@ public class GameEngine : MonoBehaviour
                 for(int i = 0; i < m_players.Length; i++)
                     if(m_players[i] != null)
                         m_players[i].updatePlayer();
+
+                if((Time.time - m_sceneOnTime) > (m_waitForStartDuration-2.5f))
+                    m_introText.text = "The hunt begin when the lights go down";
                 break;
 
             case Substate.Game:
