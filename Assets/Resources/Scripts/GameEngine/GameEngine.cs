@@ -163,12 +163,19 @@ public class GameEngine : MonoBehaviour
         switch(m_substate)
         {
             case Substate.WaitForStart:
-                if((Time.time - m_sceneOnTime) > m_waitForStartDuration)
+                if(debug)
                 {
                     enablePlayerInteractions(true);
                     m_hideFiveSeconds.enabled = false;
                     return Substate.Game;
                 }
+
+                if((Time.time - m_sceneOnTime) > m_waitForStartDuration)
+                {
+                enablePlayerInteractions(true);
+                m_hideFiveSeconds.enabled = false;
+                return Substate.Game;
+            }
                 break;
 
             case Substate.Game:

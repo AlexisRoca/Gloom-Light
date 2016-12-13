@@ -18,7 +18,6 @@ public class Torchlight : MonoBehaviour
     private Image m_batteryLightning;
     [HideInInspector] public GameObject m_batteryUI;
 
-    public float m_waitForStartDuration = 5.0f;
     public float m_lightCooldown = 3.0f;
     public float m_lightOnDuration = 1.0f;
     private float m_lightOnTime;

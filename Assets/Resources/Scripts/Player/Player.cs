@@ -116,23 +116,27 @@ public class Player : MonoBehaviour {
         }
     }
     
-    void OnTriggerEnter(Collider collider)
+    void OnTriggerStay(Collider collider)
     {
-         if (collider.gameObject.tag == "Torch" && collider.GetComponentInParent<Light>().GetComponentInParent<Player>().getLightOn())
+        if(collider.gameObject.tag == "Torch")
         {
+            Player collidedPlayer = collider.GetComponentInParent<Light>().GetComponentInParent<Player>();
+
             // Try if there is no obstable between both players
             RaycastHit hit;
-            GameObject player = collider.transform.parent.parent.parent.gameObject;
 
-            Vector3 origin = this.transform.position;
-            Vector3 direction = (player.transform.position - this.transform.position).normalized;
+            Vector3 origin = collidedPlayer.transform.position;
+            Vector3 direction = (this.transform.position - origin).normalized;
 
-            if (Physics.Raycast(origin, direction, out hit))
+            if(Physics.Raycast(origin,direction,out hit))
             {
-                if (hit.collider.gameObject == player.gameObject)
+                if(hit.collider.gameObject == this.gameObject)
                 {
-                    collider.GetComponentInParent<Light>().GetComponentInParent<Player>().m_nbKill += 1;
-                    this.m_waitForDying = true;
+                    if(collidedPlayer.getLightOn())
+                    {
+                        collider.GetComponentInParent<Light>().GetComponentInParent<Player>().m_nbKill += 1;
+                        this.m_waitForDying = true;
+                    }
                 }
             }
         }
